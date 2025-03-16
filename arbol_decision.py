@@ -38,24 +38,26 @@ df_datos, df_riesgos, df = leer_y_generar_riesgo(datos_csv)
 
 #print(df_datos)
 #print(df_riesgos)
-
-x = df_datos[["Horas_Trabajadas", "Ausencias"]]
-y = df_riesgos["Riesgo"]
-
-x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.6, random_state=0)
-
-print(df_riesgos["Riesgo"].value_counts(normalize=True))
-# Convertir el género en variables numéricas
 encoder = OneHotEncoder()
 genero_encoded = encoder.fit_transform(df[["Genero"]])  # Suponiendo que la columna se llama "Genero"
 
-# Convertir a DataFrame
 encoded_df = pd.DataFrame(genero_encoded.toarray(), columns=encoder.get_feature_names_out())
 
-# Concatenar con el dataset original
 df_datos = pd.concat([df_datos, encoded_df], axis=1)
 
-# Crear y entrenar el árbol de decisión
+x = df_datos[["Horas_Trabajadas", "Ausencias", "Genero_Femenino", "Genero_Masculino"]]
+y = df_riesgos["Riesgo"]
+
+x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=0)
+
+scaler = StandardScaler()
+x_train = scaler.fit_transform(x_train)
+x_test = scaler.transform(x_test)
+
+print(df_riesgos["Riesgo"].value_counts(normalize=True))
+
+df_datos = pd.concat([df_datos, encoded_df], axis=1)
+
 arbol = DecisionTreeClassifier(max_depth=2, random_state=0)
 arbol.fit(x_train, y_train)
 
@@ -69,9 +71,10 @@ print('Memoria: ', recall_score(y_test, y_pred_arbol))
 print('F1_score: ', f1_score(y_test, y_pred_arbol))
 print(classification_report(y_test, y_pred_arbol))
 
-
+"""
 cm = confusion_matrix(y_test, y_pred_arbol)
 sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=["Bajo Riesgo", "Alto Riesgo"], yticklabels=["Bajo Riesgo", "Alto Riesgo"])
 plt.xlabel("Predicción")
 plt.ylabel("Real")
-plt.show()
+plt.show()"
+"""

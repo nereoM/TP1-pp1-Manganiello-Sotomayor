@@ -2,7 +2,7 @@ import pandas as pd
 import random
 
 # Generar datos aleatorios para 50 personas
-n = 400
+n = 500
 data = []
 
 for i in range(1, n + 1):
