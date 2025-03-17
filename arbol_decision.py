@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from sklearn.tree import plot_tree
 from sklearn.metrics import confusion_matrix
 import seaborn as sns
+import os
 
 
 def leer_y_generar_riesgo(datos_csv):
@@ -18,8 +19,8 @@ def leer_y_generar_riesgo(datos_csv):
 
     # Normalizar las variables y calcular riesgo
     prob_riesgo = (
-        0.2 * (df["Horas_Trabajadas"] / df["Horas_Trabajadas"].max()) + 
-        0.5 * (df["Ausencias"] / df["Ausencias"].max()) +
+        0.3 * (df["Horas_Trabajadas"] / df["Horas_Trabajadas"].max()) + 
+        0.4 * (df["Ausencias"] / df["Ausencias"].max()) +
         0.2 * (df["Edad"] / df["Edad"].max()) +
         0.1 * (df["Salario"] / df["Salario"].max())
     )
@@ -32,7 +33,9 @@ def leer_y_generar_riesgo(datos_csv):
     return df_datos, df_riesgos, df
 
 
-datos_csv = r'C:\Users\Nereo\Desktop\TP1-pp1\datos\empleados.csv'
+ruta_script = os.path.dirname(os.path.abspath(__file__))
+ruta_archivo = os.path.join(ruta_script, "datos", "empleados.csv")
+datos_csv = os.path.abspath(ruta_archivo)
 
 df_datos, df_riesgos, df = leer_y_generar_riesgo(datos_csv)
 
