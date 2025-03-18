@@ -4,7 +4,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family:'Times New Roman', Times, serif;
+    font-family: 'Times New Roman', Times, serif;
 }
 
 .material-symbols-outlined {
@@ -12,24 +12,47 @@
 }
 
 body {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    min-height: 100vh;
     background: linear-gradient(#45455c, #1d1c47);
+    min-height: 100vh;
+    /* Se eliminan las propiedades de flexbox que centraban el contenido */
 }
 
 .popup {
     width: 420px;
-    height: 700px;
+    height: auto; /* Ajusta la altura según el contenido */
     background: linear-gradient(#1d1c47, #45455c);
     overflow: hidden;
     border-radius: 15px;
     box-shadow: 0 0 128px rgba(0, 0, 0, 0.1),
     0 32px 64px -48px rgba(0, 0, 0, 0.5);
+    margin: 20px auto; /* Centra horizontalmente el popup */
+    padding: 20px;
 }
 
 .titulo {
-    width: 420px;
-    justify-content: space-between;
+    text-align: center;
+    width: 100%;
+}
+
+.titulo h1 {
+    color: #fff !important;
+}
+
+.botones {
+    text-align: center;
+    width: 100%;
+    color: white;
+    margin-top: 50px;
+}
+
+img {
+    /* Cambié la propiedad absolute para que la imagen esté en flujo normal */
+    display: block;
+    margin: 20px auto; /* Centra la imagen en la parte superior */
+    width: 100px;
+    height: auto;
+}
+
+.botones button:hover {
+    background-color: #4682b4; 
 }
