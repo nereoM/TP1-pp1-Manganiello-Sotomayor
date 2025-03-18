@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family:'Times New Roman', Times, serif;
+}
+
+.material-symbols-outlined {
+    color: white;
+}
+
+body {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    background: linear-gradient(#45455c, #1d1c47);
+}
+
+.popup {
+    width: 420px;
+    height: 700px;
+    background: linear-gradient(#1d1c47, #45455c);
+    overflow: hidden;
+    border-radius: 15px;
+    box-shadow: 0 0 128px rgba(0, 0, 0, 0.1),
+    0 32px 64px -48px rgba(0, 0, 0, 0.5);
+}
+
+.titulo {
+    width: 420px;
+    justify-content: space-between;
+}

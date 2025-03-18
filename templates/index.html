@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modelo de Machine Learning</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=play_arrow" />
+    <link rel="stylesheet" href="static/style.css">
+</head>
+<body>
+    <div class="popup">
+        <div class="header">
+            <div class="titulo">
+                <h1>Predicción de Riesgo de Salud Ocupacional</h1>
+            </div>
+            <div class="botones">
+                <h3>Predecir: </h3>
+                <span class="material-symbols-outlined" onclick="entrenarModelo()">
+                    play_arrow
+                </span>
+                <p id="mensaje-entrenamiento"></p>
+                <button onclick="predecirModelo()">Predecir</button>
+                <p id="resultado-prediccion"></p>
+            </div>
+        </div>
+    </div>
+    <script>
+        function entrenarModelo() {
+            fetch('/entrenar', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    document.getElementById("mensaje-entrenamiento").innerText = data.mensaje || data.error;
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById("mensaje-entrenamiento").innerText = "Hubo un problema con el entrenamiento.";
+                });
+        }
+
+        function predecirModelo() {
+            fetch('/predecir', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        document.getElementById("resultado-prediccion").innerText = data.error;
+                    } else {
+                        let prediccionesTexto = "Predicciones: " + data.predicciones.join(", ");
+                        let precisionTexto = "Precisión: " + data.precision;
+                        let memoriaTexto = "Memoria: " + data.memoria;
+                        let f1Texto = "F1 Score: " + data.f1;
+
+                        document.getElementById("resultado-prediccion").innerHTML = 
+                            `${prediccionesTexto}<br>${precisionTexto}<br>${memoriaTexto}<br>${f1Texto}`;
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById("resultado-prediccion").innerText = "Hubo un problema con la predicción.";
+                });
+        }
+    </script>
+</body>
+</html>
