@@ -19,6 +19,16 @@ body {
     background: linear-gradient(#45455c, #1d1c47);
 }
 
+h1 {
+    font-family: "Roboto", sans-serif;
+    color: whitesmoke;
+}
+
+h2 {
+    font-family: "Roboto", sans-serif;
+    color: whitesmoke;
+}
+
 .popup {
     width: 420px;
     height: 700px;
