@@ -4,7 +4,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Poppins', Times, serif;
 }
 
 .material-symbols-outlined {
@@ -18,12 +18,16 @@ body {
 }
 
 h1 {
-    font-family: "Roboto", sans-serif;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
     color: whitesmoke;
 }
 
 h2 {
-    font-family: "Roboto", sans-serif;
+    margin: 0;
+    padding: 0;
+    font-family: 'Poppins', sans-serif;
     color: whitesmoke;
 }
 
@@ -35,7 +39,7 @@ h2 {
     border-radius: 15px;
     box-shadow: 0 0 128px rgba(0, 0, 0, 0.1),
     0 32px 64px -48px rgba(0, 0, 0, 0.5);
-    margin: 20px auto; /* Centra horizontalmente el popup */
+    margin: 20px auto;
     padding: 20px;
 }
 
@@ -50,6 +54,7 @@ h2 {
 
 .botones {
     text-align: center;
+    justify-content: center;
     width: 100%;
     color: white;
     margin-top: 50px;
@@ -64,5 +69,60 @@ img {
 }
 
 .botones button:hover {
-    background-color: #4682b4; 
+    background-color: #4682b4;
+    justify-content: center;
+}
+
+.play-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%; /* Hace el botón circular */
+    border: 2px solid transparent; /* Borde invisible */
+    background-color: transparent;
+    color: white;
+    font-size: 30px;
+    cursor: pointer; /* Cambia el cursor al de "clickeable" */
+    transition: border-color 0.3s ease-in-out, background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
+  }
+  
+  .play-button:hover {
+    border-color: white; /* Aparece el borde */
+    background-color: rgba(255, 255, 255, 0.1); /* Ligero fondo */
+    transform: scale(1.1); /* Pequeño zoom */
+    justify-content: center;
+  }
+
+
+.popup .header .botones .indicator-carga {
+    display: flex;
+    gap: 4px;
+    padding-block: 15px;
+    margin: 20px auto;
+}
+
+.popup .header .botones .indicator-carga .dot {
+    height: 7px;
+    width: 7px;
+    opacity: 0.7;
+    border-radius: 50%;
+    background: #6f6bc2;
+    animation: dotPulse 1.8s ease-in-out infinite;
+}
+
+@keyframes dotPulse {
+    0%, 44% {
+        transform: translateY(0);
+    }
+
+    28% {
+        opacity: 0.4;
+        transform: translateY(-4px);
+    }
+
+    44% {
+        opacity: 0.2;
+    }
 }

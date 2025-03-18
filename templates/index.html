@@ -19,10 +19,33 @@
             </div>
             <div class="botones">
                 <h3>Entrenar: </h3>
-                <span class="material-symbols-outlined" onclick="entrenarModelo()">play_arrow</span>
+                <span class="material-symbols-outlined play-button" onclick="entrenarModelo()">play_arrow</span>
                 <p id="mensaje-entrenamiento"></p>
-                <button onclick="predecirModelo()">Predecir</button>
+                <div class="indicator-carga">
+                    <div class="dot">
+
+                    </div>
+                    <div class="dot">
+
+                    </div>
+                    <div class="dot">
+
+                    </div>
+                </div>
+                <h3>Predecir: </h3>
+                <span class="material-symbols-outlined play-button" onclick="predecirModelo()">play_arrow</span>
                 <p id="resultado-prediccion"></p>
+                <div class="indicator-carga">
+                    <div class="dot">
+
+                    </div>
+                    <div class="dot">
+
+                    </div>
+                    <div class="dot">
+                        
+                    </div>
+                </div>
             </div>
         </div>
     </div>
