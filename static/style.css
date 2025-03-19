@@ -1,10 +1,9 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:opsz,wght@14..32,100..900&display=swap');
-
+/* Estilos generales */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Poppins', Times, serif;
+    font-family: 'Times New Roman', Times, serif;
 }
 
 .material-symbols-outlined {
@@ -12,35 +11,21 @@
 }
 
 body {
-    background: linear-gradient(#45455c, #1d1c47);
+    background: linear-gradient(#45455c, #1d1c47); /* Fondo oscuro por defecto */
     min-height: 100vh;
-    /* Se eliminan las propiedades de flexbox que centraban el contenido */
-}
-
-h1 {
-    margin: 0;
-    padding: 0;
-    font-family: 'Poppins', sans-serif;
-    color: whitesmoke;
-}
-
-h2 {
-    margin: 0;
-    padding: 0;
-    font-family: 'Poppins', sans-serif;
-    color: whitesmoke;
+    transition: background 0.5s ease;
 }
 
 .popup {
     width: 420px;
-    height: auto; /* Ajusta la altura según el contenido */
+    height: auto;
     background: linear-gradient(#1d1c47, #45455c);
     overflow: hidden;
     border-radius: 15px;
-    box-shadow: 0 0 128px rgba(0, 0, 0, 0.1),
-    0 32px 64px -48px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 128px rgba(0, 0, 0, 0.1), 0 32px 64px -48px rgba(0, 0, 0, 0.5);
     margin: 20px auto;
     padding: 20px;
+    transition: background 0.5s ease, box-shadow 0.5s ease;
 }
 
 .titulo {
@@ -54,75 +39,159 @@ h2 {
 
 .botones {
     text-align: center;
-    justify-content: center;
     width: 100%;
     color: white;
     margin-top: 50px;
 }
 
 img {
-    /* Cambié la propiedad absolute para que la imagen esté en flujo normal */
     display: block;
-    margin: 20px auto; /* Centra la imagen en la parte superior */
+    margin: 20px auto;
     width: 100px;
     height: auto;
 }
 
-.botones button:hover {
-    background-color: #4682b4;
-    justify-content: center;
+/* Estilo para los botones con animación */
+.material-symbols-outlined.play-button {
+    cursor: pointer;
+    font-size: 48px;
+    color: #fff;
+    transition: transform 0.3s ease, color 0.3s ease;
 }
 
-.play-button {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 50px;
-    height: 50px;
-    border-radius: 50%; /* Hace el botón circular */
-    border: 2px solid transparent; /* Borde invisible */
-    background-color: transparent;
-    color: white;
-    font-size: 30px;
-    cursor: pointer; /* Cambia el cursor al de "clickeable" */
-    transition: border-color 0.3s ease-in-out, background-color 0.3s ease-in-out, transform 0.2s ease-in-out;
-  }
-  
-  .play-button:hover {
-    border-color: white; /* Aparece el borde */
-    background-color: rgba(255, 255, 255, 0.1); /* Ligero fondo */
-    transform: scale(1.1); /* Pequeño zoom */
-    justify-content: center;
-  }
+body:not(.dark-mode) .material-symbols-outlined.play-button { 
 
+    color: #000000;
 
-.popup .header .botones .indicator-carga {
-    display: flex;
-    gap: 4px;
-    padding-block: 15px;
-    margin: 20px auto;
 }
 
-.popup .header .botones .indicator-carga .dot {
-    height: 7px;
-    width: 7px;
-    opacity: 0.7;
+.material-symbols-outlined.play-button:hover {
+    transform: scale(1.1);
+    color: #4682b4;
+}
+
+body:not(.dark-mode) .material-symbols-outlined.play-button:hover {
+
+    color: blueviolet !important;
+
+}
+
+/* Estilo para las animaciones de carga */
+.indicator-carga {
+    display: none;
+    justify-content: center;
+    margin-top: 20px;
+}
+
+.indicator-carga .dot {
+    width: 10px;
+    height: 10px;
+    margin: 0 5px;
+    background-color: #fff;
     border-radius: 50%;
-    background: #6f6bc2;
-    animation: dotPulse 1.8s ease-in-out infinite;
+    animation: bounce 1.2s infinite ease-in-out;
 }
 
-@keyframes dotPulse {
-    0%, 44% {
+.indicator-carga .dot:nth-child(1) {
+    animation-delay: 0s;
+}
+
+.indicator-carga .dot:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.indicator-carga .dot:nth-child(3) {
+    animation-delay: 0.4s;
+}
+
+@keyframes bounce {
+    0%, 20%, 50%, 80%, 100% {
         transform: translateY(0);
     }
-
-    28% {
-        opacity: 0.4;
-        transform: translateY(-4px);
+    40% {
+        transform: translateY(-10px);
     }
-
-    44% {
-        opacity: 0.2;
+    60% {
+        transform: translateY(-5px);
     }
 }
+
+/* Modo oscuro */
+body.dark-mode {
+    background: linear-gradient(#1a1a2e, #16213e);
+    color: white;
+}
+
+body.dark-mode .popup {
+    background: linear-gradient(#16213e, #0f3460);
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
+}
+
+body.dark-mode .titulo h1 {
+    color: #f1f1f1;
+}
+
+body:not(.dark-mode) .titulo  h1 {
+    color: #000000 !important;
+}
+
+body.dark-mode .botones {
+    color: #f1f1f1;
+}
+
+body:not(.dark-mode) .botones {
+    color: #000000;
+}
+
+/* Modo claro - más brillante */
+body:not(.dark-mode) {
+    background: linear-gradient(#ffffff, #fea2f9); /* Fondo blanco/clarito */
+    color: #333; /* Texto oscuro */
+}
+
+body:not(.dark-mode) .popup {
+    background: linear-gradient(#ffffff, #fea2f9); /* Fondo más claro */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+}
+
+
+/* Estilo para el botón de cambio de modo */
+#modo-toggle {
+    position: fixed;
+    top: 10px;
+    right: 10px;
+    padding: 10px;
+    background-color: #4d5eb3;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+#modo-toggle:hover {
+    background-color: #3a4ba8;
+}
+
+/* Estilo para los íconos del modo */
+#modo-toggle .material-symbols-outlined {
+    font-size: 36px; /* Tamaño más grande para los íconos */
+}
+
+/* Estilo específico para el sol y la luna */
+body:not(.dark-mode) #modo-toggle .material-symbols-outlined.sun {
+    color: yellow; /* Sol en color amarillo */
+}
+
+body.dark-mode #modo-toggle .material-symbols-outlined.moon {
+    color: #bbb; /* Luna en color gris claro */
+}
+
+body.dark-mode #modo-toggle .material-symbols-outlined.sun {
+    color: #f39c12; /* Sol en color naranja cuando esté en modo oscuro */
+}
+
+body:not(.dark-mode) #modo-toggle .material-symbols-outlined.moon {
+    color: #bbb; /* Luna gris en modo claro */
+}
+

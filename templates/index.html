@@ -4,13 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Modelo de Machine Learning</title>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0&icon_names=play_arrow" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" />
     <link rel="stylesheet" href="static/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
 
-<body>
-  <img src="https://www.ungs.edu.ar/wp-content/uploads/2024/06/logo_ungs_512.png" alt="logo ungs">
+<body class="{{ 'dark-mode' if modo_oscuro == 'true' else '' }}">
+    <img src="https://www.ungs.edu.ar/wp-content/uploads/2024/06/logo_ungs_512.png" alt="logo ungs">
+
+    <!-- Botón con icono de Sol y Luna -->
+    <button id="modo-toggle" onclick="cambiarModo()">
+        <span class="material-symbols-outlined moon" id="icono-modo">nightlight_round</span>
+        <span class="material-symbols-outlined sun" id="icono-modo">wb_sunny</span>
+    </button>
 
     <div class="popup">
         <div class="header">
@@ -22,51 +28,82 @@
                 <span class="material-symbols-outlined play-button" onclick="entrenarModelo()">play_arrow</span>
                 <p id="mensaje-entrenamiento"></p>
                 <div class="indicator-carga">
-                    <div class="dot">
-
-                    </div>
-                    <div class="dot">
-
-                    </div>
-                    <div class="dot">
-
-                    </div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
                 </div>
                 <h3>Predecir: </h3>
                 <span class="material-symbols-outlined play-button" onclick="predecirModelo()">play_arrow</span>
                 <p id="resultado-prediccion"></p>
                 <div class="indicator-carga">
-                    <div class="dot">
-
-                    </div>
-                    <div class="dot">
-
-                    </div>
-                    <div class="dot">
-                        
-                    </div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
                 </div>
             </div>
         </div>
     </div>
+
+    <script>
+        
+        function presionarBoton() {
+            
+            const play = document.querySelectorAll('.play-button'); 
+            
+         
+            const indicadoresCarga = document.querySelectorAll('.indicator-carga'); 
+            
+           
+            play.forEach((button, index) => {
+                button.addEventListener('click', function () {
+                    
+                    indicadoresCarga[index].style.display = 'flex';
+                });
+            });
+        }
     
+        
+        presionarBoton();
+    </script>
+    
+
     <script>
         function entrenarModelo() {
             fetch('/entrenar', { method: 'POST' })
                 .then(response => response.json())
                 .then(data => {
+                    setTimeout(() => {
                     document.getElementById("mensaje-entrenamiento").innerText = data.mensaje || data.error;
+
+                    document.querySelectorAll('.indicator-carga').forEach(indicator => {
+                        indicator.style.display = 'none';
+                    
+
                 })
+           
+                    }, 3000);
+
+                
+
+                    })
+                
                 .catch(error => {
                     console.error('Error:', error);
                     document.getElementById("mensaje-entrenamiento").innerText = "Hubo un problema con el entrenamiento.";
                 });
+
+                document.querySelectorAll('.indicator-carga').forEach(indicator => {
+                        indicator.style.display = 'none';
+                    });
+                
+        
         }
 
         function predecirModelo() {
             fetch('/predecir', { method: 'POST' })
                 .then(response => response.json())
                 .then(data => {
+                    setTimeout(() => {
                     if (data.error) {
                         document.getElementById("resultado-prediccion").innerText = data.error;
                     } else {
@@ -78,11 +115,57 @@
                         document.getElementById("resultado-prediccion").innerHTML = 
                             `${prediccionesTexto}<br>${precisionTexto}<br>${memoriaTexto}<br>${f1Texto}`;
                     }
+
+                    document.querySelectorAll('.indicator-carga').forEach(indicator => {
+                        indicator.style.display = 'none';
+                    })
+                    
+                }, 3000);
+             
+                
                 })
+
+        
+
                 .catch(error => {
                     console.error('Error:', error);
                     document.getElementById("resultado-prediccion").innerText = "Hubo un problema con la predicción.";
                 });
+
+                document.querySelectorAll('.indicator-carga').forEach(indicator => {
+                        indicator.style.display = 'none';
+                    });
+                
+        }
+
+        function cambiarModo() {
+            const modoOscuro = document.body.classList.contains("dark-mode");
+            const nuevoModo = modoOscuro ? 'false' : 'true';
+
+            fetch('/cambiar_modo', { 
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 'modo_oscuro': nuevoModo })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.body.classList.toggle("dark-mode", !modoOscuro);
+
+                const sol = document.querySelector(".sun");
+                const luna = document.querySelector(".moon");
+                if (!modoOscuro) {
+                    sol.style.display = "none";
+                    luna.style.display = "block";
+                } else {
+                    sol.style.display = "block";
+                    luna.style.display = "none";
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
         }
     </script>
 </body>
