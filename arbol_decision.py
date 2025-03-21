@@ -31,12 +31,12 @@ def leer_y_generar_riesgo(datos_csv):
 
     return df_datos, df_riesgos, df
 
-def main():
-    ruta_script = os.path.dirname(os.path.abspath(__file__))
-    ruta_archivo = os.path.join(ruta_script, "datos", "empleados.csv")
-    datos_csv = os.path.abspath(ruta_archivo)
+def main(ruta_archivo):
+    #ruta_script = os.path.dirname(os.path.abspath(__file__))
+    #ruta_archivo = os.path.join(ruta_script, "datos", "empleados.csv")
+    #datos_csv = os.path.abspath(ruta_archivo)
 
-    df_datos, df_riesgos, df = leer_y_generar_riesgo(datos_csv)
+    df_datos, df_riesgos, df = leer_y_generar_riesgo(ruta_archivo)
 
     #print(df_datos)
     #print(df_riesgos)

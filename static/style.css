@@ -1,4 +1,4 @@
-/* Estilos generales */
+
 * {
     margin: 0;
     padding: 0;
@@ -6,12 +6,65 @@
     font-family: 'Times New Roman', Times, serif;
 }
 
+.menu-desplegable {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 1000;
+}
+
+.menu-boton {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    color: #333;
+}
+
+.menu-opciones {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: none;
+    position: absolute;
+    top: 40px;
+    left: 0;
+    width: 200px;
+}
+
+.menu-opciones.active {
+    display: block;
+}
+
+.menu-opciones li {
+    padding: 10px;
+    border-bottom: 1px solid #eee;
+}
+
+.menu-opciones li:last-child {
+    border-bottom: none;
+}
+
+.menu-opciones li a {
+    text-decoration: none;
+    color: #333;
+    display: block;
+}
+
+.menu-opciones li a:hover {
+    background-color: #f5f5f5;
+}
+
 .material-symbols-outlined {
     color: white;
 }
 
 body {
-    background: linear-gradient(#45455c, #1d1c47); /* Fondo oscuro por defecto */
+    background: linear-gradient(#45455c, #1d1c47);
     min-height: 100vh;
     transition: background 0.5s ease;
 }
@@ -37,6 +90,14 @@ body {
     color: #fff !important;
 }
 
+.modelo {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    margin-top: 20px;
+}
+
 .botones {
     text-align: center;
     width: 100%;
@@ -51,13 +112,16 @@ body {
     justify-content: center;
 }
 
+/*
 .subir-archivo input {
     display: none;
 }
-
+*/
 .upload-button {
     cursor: pointer;
     font-size: 30px;
+    align-items: center;
+    justify-content: center;
 }
 
 
@@ -68,8 +132,14 @@ img {
     height: auto;
 }
 
-/* Estilo para los botones con animación */
 .material-symbols-outlined.play-button {
+    cursor: pointer;
+    font-size: 48px;
+    color: #fff;
+    transition: transform 0.3s ease, color 0.3s ease;
+}
+
+.material-symbols-outlined.upload-button {
     cursor: pointer;
     font-size: 48px;
     color: #fff;
@@ -93,7 +163,23 @@ body:not(.dark-mode) .material-symbols-outlined.play-button:hover {
 
 }
 
-/* Estilo para las animaciones de carga */
+body:not(.dark-mode) .material-symbols-outlined.upload-button { 
+
+    color: #000000;
+
+}
+
+.material-symbols-outlined.upload-button:hover {
+    transform: scale(1.1);
+    color: #4682b4;
+}
+
+body:not(.dark-mode) .material-symbols-outlined.upload-button:hover {
+
+    color: blueviolet !important;
+
+}
+
 .indicator-carga {
     display: none;
     justify-content: center;
@@ -160,19 +246,17 @@ body:not(.dark-mode) .botones {
     color: #000000;
 }
 
-/* Modo claro - más brillante */
 body:not(.dark-mode) {
     background: linear-gradient(#ffffff, #fea2f9); /* Fondo blanco/clarito */
-    color: #333; /* Texto oscuro */
+    color: #333;
 }
 
 body:not(.dark-mode) .popup {
-    background: linear-gradient(#ffffff, #fea2f9); /* Fondo más claro */
+    background: linear-gradient(#ffffff, #fea2f9);
     box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
 }
 
 
-/* Estilo para el botón de cambio de modo */
 #modo-toggle {
     position: fixed;
     top: 10px;
@@ -190,25 +274,23 @@ body:not(.dark-mode) .popup {
     background-color: #3a4ba8;
 }
 
-/* Estilo para los íconos del modo */
 #modo-toggle .material-symbols-outlined {
-    font-size: 36px; /* Tamaño más grande para los íconos */
+    font-size: 36px;
 }
 
-/* Estilo específico para el sol y la luna */
 body:not(.dark-mode) #modo-toggle .material-symbols-outlined.sun {
-    color: yellow; /* Sol en color amarillo */
+    color: yellow;
 }
 
 body.dark-mode #modo-toggle .material-symbols-outlined.moon {
-    color: #bbb; /* Luna en color gris claro */
+    color: #bbb;
 }
 
 body.dark-mode #modo-toggle .material-symbols-outlined.sun {
-    color: #f39c12; /* Sol en color naranja cuando esté en modo oscuro */
+    color: #f39c12;
 }
 
 body:not(.dark-mode) #modo-toggle .material-symbols-outlined.moon {
-    color: #bbb; /* Luna gris en modo claro */
+    color: #bbb;
 }
 

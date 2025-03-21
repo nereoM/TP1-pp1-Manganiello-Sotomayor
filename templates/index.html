@@ -10,6 +10,18 @@
 </head>
 
 <body class="{{ 'dark-mode' if modo_oscuro == 'true' else '' }}">
+
+    <div class="menu-desplegable">
+        <button class="menu-boton" onclick="toggleMenu()">
+            <span class="material-symbols-outlined">menu</span>
+        </button>
+        <ul class="menu-opciones">
+            <li><a href="#">Modelo: Árbol de decisión</a></li>
+            <li><a href="#">Modelo: Regresión logística</a></li>
+            <li><a href="#">Generar CSV</a></li>
+        </ul>
+    </div>
+
     <img src="https://www.ungs.edu.ar/wp-content/uploads/2024/06/logo_ungs_512.png" alt="logo ungs">
 
     <!-- Botón con icono de Sol y Luna -->
@@ -22,15 +34,20 @@
         <div class="header">
             <div class="titulo">
                 <h1>Predicción de Riesgo de Salud Ocupacional</h1>
-            <div class="subir-archivo">
-                <form method="post" enctype="multipart/form-data">
-                    <label for="archivo">
-                        <span class="material-symbols-outlined upload-button">upload_file</span>
-                    </label>
-                    <input id="archivo" type="file" name="file" accept=".csv" required>
-                </form>
+                <div class="modelo">
+                    <h2>Modelo de Arboles de decisión</h2>
+                </div>
             </div>
             <div class="botones">
+                <div class="carga-archivo">
+                    <h3>Cargar archivo CSV</h3>
+                    <form id="upload-form" method="post" enctype="multipart/form-data">
+                        <label for="archivo">
+                            <span class="material-symbols-outlined upload-button" onclick="seleccionarArchivo()">upload_file</span>
+                        </label>
+                        <input id="archivo" type="file" name="file" accept=".csv" required style="display: none;">
+                    </form>
+                </div>
                 <h3>Entrenar: </h3>
                 <span class="material-symbols-outlined play-button" onclick="entrenarModelo()">play_arrow</span>
                 <p id="mensaje-entrenamiento"></p>
@@ -52,58 +69,105 @@
     </div>
 
     <script>
-        
+        function toggleMenu() {
+            const menu = document.querySelector('.menu-opciones');
+            menu.classList.toggle('active');
+        }
+
         function presionarBoton() {
-            
-            const play = document.querySelectorAll('.play-button'); 
-            
-         
-            const indicadoresCarga = document.querySelectorAll('.indicator-carga'); 
-            
-           
+            const play = document.querySelectorAll('.play-button');
+            const indicadoresCarga = document.querySelectorAll('.indicator-carga');
+
             play.forEach((button, index) => {
                 button.addEventListener('click', function () {
-                    
                     indicadoresCarga[index].style.display = 'flex';
                 });
             });
         }
-    
-        
+
         presionarBoton();
     </script>
-    
-
     <script>
+        let filepath = null;
+
+        function seleccionarArchivo() {
+            const inputArchivo = document.getElementById("archivo");
+
+            inputArchivo.removeEventListener("change", handleFileSelect);
+
+            inputArchivo.addEventListener("change", handleFileSelect, { once: true });
+
+            inputArchivo.click();
+        }
+
+        function handleFileSelect(event) {
+            if (event.target.files.length > 0) {
+                subirArchivo();
+            }
+        }
+
+        function subirArchivo() {
+            const inputArchivo = document.getElementById("archivo");
+
+            if (inputArchivo.files.length === 0) return; // Evita que se ejecute sin archivo seleccionado
+
+            const form = document.getElementById("upload-form");
+            const formData = new FormData(form);
+
+            fetch('/subir_archivo', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert(data.mensaje);
+                    filepath = data.filepath;
+                    console.log("✅ Archivo subido, ruta:", filepath);
+                }
+            })
+            .catch(error => {
+                console.error('❌ Error en la subida:', error);
+                alert('Error al subir el archivo.');
+            });
+
+            // Limpiar el input para evitar que el mismo archivo dispare el evento nuevamente
+            inputArchivo.value = "";
+    }
+
         function entrenarModelo() {
-            fetch('/entrenar', { method: 'POST' })
-                .then(response => response.json())
-                .then(data => {
-                    setTimeout(() => {
+            if (!filepath) {
+                alert("Primero sube un archivo.");
+                return;
+            }
+
+            fetch('/entrenar', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ filepath: filepath })
+            })
+            .then(response => response.json())
+            .then(data => {
+                setTimeout(() => {
                     document.getElementById("mensaje-entrenamiento").innerText = data.mensaje || data.error;
 
                     document.querySelectorAll('.indicator-carga').forEach(indicator => {
                         indicator.style.display = 'none';
-                    
-
-                })
-           
-                    }, 3000);
-
-                
-
-                    })
-                
-                .catch(error => {
-                    console.error('Error:', error);
-                    document.getElementById("mensaje-entrenamiento").innerText = "Hubo un problema con el entrenamiento.";
-                });
-
-                document.querySelectorAll('.indicator-carga').forEach(indicator => {
-                        indicator.style.display = 'none';
                     });
-                
-        
+                }, 3000);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById("mensaje-entrenamiento").innerText = "Hubo un problema con el entrenamiento.";
+            });
+
+            document.querySelectorAll('.indicator-carga').forEach(indicator => {
+                indicator.style.display = 'none';
+            });
         }
 
         function predecirModelo() {
@@ -111,45 +175,39 @@
                 .then(response => response.json())
                 .then(data => {
                     setTimeout(() => {
-                    if (data.error) {
-                        document.getElementById("resultado-prediccion").innerText = data.error;
-                    } else {
-                        let prediccionesTexto = "Predicciones: " + data.predicciones.join(", ");
-                        let precisionTexto = "Precisión: " + data.precision;
-                        let memoriaTexto = "Memoria: " + data.memoria;
-                        let f1Texto = "F1 Score: " + data.f1;
+                        if (data.error) {
+                            document.getElementById("resultado-prediccion").innerText = data.error;
+                        } else {
+                            let prediccionesTexto = "Predicciones: " + data.predicciones.join(", ");
+                            let precisionTexto = "Precisión: " + data.precision;
+                            let memoriaTexto = "Memoria: " + data.memoria;
+                            let f1Texto = "F1 Score: " + data.f1;
 
-                        document.getElementById("resultado-prediccion").innerHTML = 
-                            `${prediccionesTexto}<br>${precisionTexto}<br>${memoriaTexto}<br>${f1Texto}`;
-                    }
+                            document.getElementById("resultado-prediccion").innerHTML =
+                                `${prediccionesTexto}<br>${precisionTexto}<br>${memoriaTexto}<br>${f1Texto}`;
+                        }
 
-                    document.querySelectorAll('.indicator-carga').forEach(indicator => {
-                        indicator.style.display = 'none';
-                    })
-                    
-                }, 3000);
-             
-                
+                        document.querySelectorAll('.indicator-carga').forEach(indicator => {
+                            indicator.style.display = 'none';
+                        });
+                    }, 3000);
                 })
-
-        
-
                 .catch(error => {
                     console.error('Error:', error);
                     document.getElementById("resultado-prediccion").innerText = "Hubo un problema con la predicción.";
                 });
 
-                document.querySelectorAll('.indicator-carga').forEach(indicator => {
-                        indicator.style.display = 'none';
-                    });
-                
+            document.querySelectorAll('.indicator-carga').forEach(indicator => {
+                indicator.style.display = 'none';
+            });
         }
-
+    </script>
+    <script>
         function cambiarModo() {
             const modoOscuro = document.body.classList.contains("dark-mode");
             const nuevoModo = modoOscuro ? 'false' : 'true';
 
-            fetch('/cambiar_modo', { 
+            fetch('/cambiar_modo', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'

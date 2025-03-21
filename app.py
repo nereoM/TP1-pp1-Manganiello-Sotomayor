@@ -8,7 +8,6 @@ import os
 
 app = Flask(__name__)
 
-# Utilizamos esta variable para almacenar el modelo y poder predecir cuando queramos.
 modelo = None
 df_datos = None
 df_riesgos = None
@@ -24,25 +23,45 @@ def index():
     modo_oscuro = request.cookies.get('modo_oscuro', 'false')
     return render_template("index.html", modo_oscuro=modo_oscuro)
 
+@app.route('/subir_archivo', methods=['POST'])
+def subir_archivo():
+    if 'file' not in request.files:
+        return jsonify({"error": "No se seleccionó ningún archivo"}), 400
+
+    file = request.files['file']
+
+    if file.filename == '':
+        return jsonify({"error": "El archivo no tiene nombre"}), 400
+
+    if not os.path.exists(app.config['UPLOAD_FOLDER']):
+        os.makedirs(app.config['UPLOAD_FOLDER'])
+
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
+    file.save(filepath)
+
+    print(f"File saved at: {filepath}")
+
+    return jsonify({"mensaje": "Archivo subido correctamente", "filepath": filepath})
+
 @app.route('/entrenar', methods=['POST'])
 def entrenar_modelo():
     global modelo, df_datos, df_riesgos, x_train, x_test, y_test
-    
     try:
-        if request.method == 'POST':
-            if 'file' not in request.files:
-                return redirect(request.url)
-            file = request.files['file']
-            if file.filename == '':
-                return redirect(request.url)
-            if file:
-                filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-                file.save(filepath)
-                modelo, x_train, x_test, y_test = main(filepath)
+        data = request.get_json()
+        filepath = data.get('filepath')
+
+        if not filepath:
+            return jsonify({"error": "No se recibió el filepath"}), 400
+
+        if not os.path.exists(filepath):
+            return jsonify({"error": "El archivo no existe"}), 400
+
+        modelo, x_train, x_test, y_test = main(filepath)
 
         return jsonify({"mensaje": "Modelo entrenado correctamente"})
     except Exception as e:
         return jsonify({"error": f"Ocurrió un error: {str(e)}"}), 500
+
     
 @app.route('/predecir', methods=['POST'])
 def predecir_modelo():
@@ -72,4 +91,6 @@ def cambiar_modo():
     return resp
 
 if __name__ == '__main__':
+    if not os.path.exists(UPLOAD_FOLDER):
+        os.makedirs(UPLOAD_FOLDER)
     app.run(debug=True)
