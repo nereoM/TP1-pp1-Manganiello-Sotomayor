@@ -64,6 +64,9 @@
                     <div class="dot"></div>
                     <div class="dot"></div>
                 </div>
+                <div class="descargar-archivo">
+                    <span class="material-symbols-outlined download-button" onclick="generarYDescargarCSV()">download_2</span>
+                </div>
             </div>
         </div>
     </div>
@@ -109,7 +112,7 @@
         function subirArchivo() {
             const inputArchivo = document.getElementById("archivo");
 
-            if (inputArchivo.files.length === 0) return; // Evita que se ejecute sin archivo seleccionado
+            if (inputArchivo.files.length === 0) return;
 
             const form = document.getElementById("upload-form");
             const formData = new FormData(form);
@@ -125,15 +128,14 @@
                 } else {
                     alert(data.mensaje);
                     filepath = data.filepath;
-                    console.log("✅ Archivo subido, ruta:", filepath);
+                    console.log("Archivo subido, ruta:", filepath);
                 }
             })
             .catch(error => {
-                console.error('❌ Error en la subida:', error);
+                console.error('Error en la subida:', error);
                 alert('Error al subir el archivo.');
             });
 
-            // Limpiar el input para evitar que el mismo archivo dispare el evento nuevamente
             inputArchivo.value = "";
     }
 
@@ -200,6 +202,26 @@
             document.querySelectorAll('.indicator-carga').forEach(indicator => {
                 indicator.style.display = 'none';
             });
+        }
+
+        function generarYDescargarCSV() {
+            fetch('/generar_csv', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ filepath: 'ruta/del/archivo.csv' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert("CSV generado correctamente. Descargando...");
+                    window.location.href = "/descargar_csv";
+                }
+            })
+            .catch(error => console.error('Error:', error));
         }
     </script>
     <script>

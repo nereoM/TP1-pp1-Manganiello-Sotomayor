@@ -45,6 +45,8 @@ def main(ruta_archivo):
 
     encoded_df = pd.DataFrame(genero_encoded.toarray(), columns=encoder.get_feature_names_out())
 
+    df_original = df_datos.copy()
+
     df_datos = pd.concat([df_datos, encoded_df], axis=1)
 
     x = df_datos[["Horas_Trabajadas", "Ausencias", "Genero_Femenino", "Genero_Masculino"]]
@@ -66,6 +68,8 @@ def main(ruta_archivo):
     arbol = DecisionTreeClassifier(max_depth=2, random_state=0)
     arbol.fit(x_train, y_train)
 
+    x_full = scaler.transform(x)
+
     #y_pred_arbol = arbol.predict(x_test)
     # print('Reales:     ', y_test.values.tolist())
     # print('Prediccion: ', y_pred_arbol.tolist())
@@ -74,7 +78,7 @@ def main(ruta_archivo):
     # print('F1_score: ', f1_score(y_test, y_pred_arbol))
     # print(classification_report(y_test, y_pred_arbol))
 
-    return arbol, x_train, x_test, y_test
+    return arbol, x_train, x_test, y_test, x_full, df_original
 
 """
 cm = confusion_matrix(y_test, y_pred_arbol)
