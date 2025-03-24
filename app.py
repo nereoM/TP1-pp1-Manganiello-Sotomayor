@@ -125,6 +125,8 @@ def predecir_individual():
         except Exception as e:
             return jsonify({"error": f"No se pudo entrenar el modelo: {str(e)}"}), 500
 
+    resultado = None  # Inicializamos el resultado fuera de la lógica del POST
+
     if request.method == 'POST':
         horas_trabajadas = request.form.get('horas_trabajadas')
         ausencias = request.form.get('ausencias')
@@ -161,11 +163,9 @@ def predecir_individual():
             df_individual_normalizado = scaler.transform(df_individual)
 
         prediccion = modelo.predict(df_individual_normalizado)
-        resultado = "Alto Riesgo" if prediccion[0] == 1 else "Bajo Riesgo"
+        resultado = "Alto" if prediccion[0] == 1 else "Bajo"
 
-        return render_template('resultado.html', resultado=resultado)
-
-    return render_template('predecir_individual.html')
+    return render_template('predecir_individual.html', resultado=resultado)
 
 
 @app.route('/subir_archivo', methods=['POST'])

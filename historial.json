@@ -138,5 +138,14 @@
         "usuario": "Naza",
         "fecha": "2025-03-23 23:10:18",
         "archivo": "empleados.csv"
+    },
+    {
+        "usuario": "Lala",
+        "fecha": "2025-03-24 09:52:14"
+    },
+    {
+        "usuario": "Lala",
+        "fecha": "2025-03-24 09:52:47",
+        "archivo": "empleados.csv"
     }
 ]

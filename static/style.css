@@ -572,3 +572,49 @@ body.dark-mode #modo-toggle {
     text-align: center;
     margin-bottom: 20px;
 }
+
+/* Estilo del ícono de ayuda */
+.icono-info {
+    position: relative;
+    cursor: pointer;
+    font-size: 24px;
+    color: #007bff;  /* Cambia el color si lo prefieres */
+}
+
+/* Estilo del mensaje emergente (tooltip) */
+.icono-info::after {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: 35px;  /* Ajusta el margen superior si lo necesitas */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #333;
+    color: #fff;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 14px;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.3s;
+    white-space: nowrap;
+    z-index: 10;
+    max-width: 200px;  /* Limita el ancho del tooltip */
+    word-wrap: break-word;  /* Asegura que el texto largo se ajuste */
+}
+
+/* Mostrar el tooltip al pasar el mouse */
+.icono-info:hover::after {
+    visibility: visible;
+    opacity: 1;
+}
+
+/* Ajustes cuando el tooltip está cerca del borde de la pantalla */
+.icono-info:hover::after {
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+/* Añadir desplazamiento del tooltip si está demasiado cerca del borde */
+.icono-info:hover::after {
+    left: calc(50% - 120px); /* Modifica este valor si el tooltip aún se desborda */
+}

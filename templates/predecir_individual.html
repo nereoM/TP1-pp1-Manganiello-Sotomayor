@@ -40,6 +40,12 @@
             
             <button type="submit" class="boton-principal">Predecir</button>
         </form>
+
+        {% if resultado %}
+        <div class="resultado">
+            <h3>Riesgo: {{ resultado }}</h3>
+        </div>
+        {% endif %}
     </div>
 
     <script>
@@ -74,5 +80,6 @@
             });
         }
     </script>
+
 </body>
 </html>
