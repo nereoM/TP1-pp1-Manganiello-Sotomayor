@@ -40,15 +40,12 @@
         <div class="empleados-container">
             {% for empleado in empleados_riesgo %}
                 <div class="empleado popup">
-                    <!-- Avatar del empleado usando el hash generado -->
-                    <img src="https://www.gravatar.com/avatar/{{ empleado.avatar_hash }}?d=identicon" alt="Avatar de {{ empleado.id }}" class="avatar">
+                    <img src="https://p7.hiclipart.com/preview/81/570/423/computer-icons-user-clip-art-user-thumbnail.jpg" alt="Avatar de {{ empleado.id }}" class="avatar">
 
-                    <!-- Información del empleado -->
                     <div class="empleado-info">
                         <h3>ID: {{ empleado.id }}</h3>
                         <button class="ver-detalles-btn" onclick="mostrarDetalles('{{ empleado.id }}')">Ver Detalles</button>
 
-                        <!-- Detalles ocultos de cada empleado -->
                         <div id="detalles-{{ empleado.id }}" class="detalles" style="display:none;">
                             <p><strong>Horas Trabajadas:</strong> {{ empleado.horas_trabajadas }}</p>
                             <p><strong>Ausencias:</strong> {{ empleado.ausencias }}</p>

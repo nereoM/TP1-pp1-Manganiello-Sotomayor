@@ -52,13 +52,8 @@ y_pred = log_reg.predict(x_test)
 print('Reales: ', y_test.values.tolist())
 print('Prediccion: ', y_pred.tolist())
 
-# Metricas para ver la precision
-
-print('Precision: ', precision_score(y_test, y_pred)) # Porcentaje de acierto en cada vez que compra, 
-# es decir, que tan preciso es el modelo al predecir casos positivos.
-
-print('Memoria: ', recall_score(y_test, y_pred)) # Porcentaje de casos positivos identificados correctamente.
-print('F1_score: ', f1_score(y_test, y_pred)) # Variable que combina la precision y la memoria.
-
+print('Precision: ', precision_score(y_test, y_pred))
+print('Memoria: ', recall_score(y_test, y_pred))
+print('F1_score: ', f1_score(y_test, y_pred))
 print(classification_report(y_test, y_pred))
 

@@ -43,10 +43,6 @@
         <span class="material-symbols-outlined sun" id="icono-modo">wb_sunny</span>
     </button>
 
-    <a href="{{ url_for('resultados') }}">
-        <span class="material-symbols-outlined upload-button" onclick="generarCSV()">pageview</span>
-    </a>
-
     <div class="popup">
         <div class="header">
             <div class="titulo">
@@ -83,6 +79,10 @@
                 </div>
                 <div class="descargar-archivo">
                     <span class="material-symbols-outlined upload-button" onclick="generarYDescargarCSV()">download_2</span>
+
+                    <a href="{{ url_for('resultados') }}">
+                        <span class="material-symbols-outlined upload-button" onclick="generarCSV()">pageview</span>
+                    </a>
                 </div>
             </div>
         </div>
