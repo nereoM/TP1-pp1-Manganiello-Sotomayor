@@ -294,3 +294,275 @@ body:not(.dark-mode) #modo-toggle .material-symbols-outlined.moon {
     color: #bbb;
 }
 
+/* Centraliza todo el contenido */
+.contenido {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Hace que el contenido ocupe toda la altura de la pantalla */
+    flex-direction: column;
+    text-align: center;
+    padding: 0 20px;
+    background-color: #f8f9fa; /* Fondo claro por defecto */
+    transition: background-color 0.3s ease;
+}
+
+/* Estilo para el modo oscuro y claro */
+/* Modo claro */
+body:not(.dark-mode) {
+    background: linear-gradient(#ffffff, #fea2f9); /* Fondo blanco/rosado */
+    color: #333;
+}
+
+/* Modo oscuro */
+body.dark-mode {
+    background: linear-gradient(#1a1a2e, #16213e);
+    color: white;
+}
+
+/* Estilo para las páginas específicas */
+body:not(.dark-mode) .contenido {
+    background: linear-gradient(#ffffff, #fea2f9); /* Fondo rosado para modo claro */
+}
+
+body.dark-mode .contenido {
+    background: linear-gradient(#1a1a2e, #16213e); /* Fondo oscuro para modo oscuro */
+}
+
+/* Estilo de la página de inicio */
+body:not(.dark-mode) .mensaje-bienvenida p {
+    color: #333;
+}
+
+body.dark-mode .mensaje-bienvenida p {
+    color: #e0e0e0;
+}
+
+/* Estilo de los botones */
+.boton-principal {
+    background-color: #4682b4;
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    font-size: 20px;
+    margin: 15px 0;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    width: 220px;
+    text-align: center;
+}
+
+.boton-principal:hover {
+    background-color: #5f8aa8;
+    transform: scale(1.05);
+}
+
+/* El resto del estilo sigue igual */
+
+
+/* Botón de alternar modo */
+#modo-toggle {
+    background-color: transparent;
+    border: none;
+    cursor: pointer;
+    font-size: 24px;
+    color: #4682b4;
+    margin-bottom: 20px;
+    transition: color 0.3s ease;
+}
+
+body.dark-mode #modo-toggle {
+    color: #e0e0e0;
+}
+
+/* Formulario */
+.formulario input {
+    width: 100%;
+    padding: 12px;
+    margin: 10px 0;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 18px;
+    transition: border 0.3s ease;
+}
+
+.formulario input:focus {
+    border-color: #4682b4;
+    outline: none;
+}
+
+/* Botón de formulario */
+.formulario button {
+    background-color: #4682b4;
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    font-size: 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    width: 100%;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.formulario button:hover {
+    background-color: #5f8aa8;
+    transform: scale(1.05);
+}
+
+/* Estilo del formulario cuando no hay usuario */
+.formulario {
+    width: 100%;
+    max-width: 350px; /* Limitar el tamaño máximo del formulario */
+    margin: 0 auto;
+}
+
+/* Ajuste de visualización de botones */
+.botones {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 20px;
+    justify-content: center;
+}
+
+.botones a {
+    text-decoration: none;
+}
+
+.botones .button {
+    background-color: #4682b4;
+    border: none;
+    color: white;
+    padding: 12px 24px;
+    font-size: 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    text-align: center;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.botones .button:hover {
+    background-color: #5f8aa8;
+    transform: scale(1.05);
+}
+.resultados {
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+
+
+/* Cada empleado */
+.empleado {
+    background-color: #3b3b3b; /* Fondo oscuro */
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    padding: 20px;
+    width: 200px;
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    opacity: 0;
+    animation: fadeIn 0.5s forwards;
+}
+
+.empleado:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+
+/* Avatar */
+.avatar {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 10px;
+    border: 2px solid #fff; /* Borde blanco para resaltar */
+    transition: transform 0.3s ease;
+}
+
+.avatar:hover {
+    transform: scale(1.1);
+}
+
+/* Información del empleado */
+.empleado-info h3 {
+    font-size: 1.2rem;
+    margin-bottom: 10px;
+    color: #ddd; /* Texto claro */
+}
+
+.ver-detalles-btn {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.ver-detalles-btn:hover {
+    background-color: #45a049;
+}
+
+.detalles {
+    margin-top: 10px;
+    background-color: #f9f9f9;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    display: none;
+    transition: max-height 0.3s ease;
+    max-height: 0;
+    overflow: hidden;
+}
+
+/* Barra lateral */
+.barra-lateral {
+    height: 100%;
+    width: 0;
+    position: fixed;
+    top: 0;
+    right: 0;
+    background-color: #333;
+    z-index: 999;
+    overflow-x: hidden;
+    transition: 0.5s;
+    padding-top: 60px;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+}
+
+.barra-lateral .cerrar {
+    color: #aaa;
+    background-color: transparent;
+    border: none;
+    font-size: 2rem;
+    padding: 10px;
+    cursor: pointer;
+    margin-left: auto;
+    margin-right: 20px;
+    transition: color 0.3s ease;
+}
+
+.barra-lateral .cerrar:hover {
+    color: #fff;
+}
+
+.barra-lateral #barra-contenido {
+    padding: 20px;
+    overflow-y: auto;
+}
+
+/* Animación fade-in */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Página de Inicio</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+<body class="{{ 'dark-mode' if modo_oscuro == 'true' else '' }}">
+
+    <!-- Botón para alternar modo oscuro y claro -->
+    <button id="modo-toggle" onclick="cambiarModo()">
+        <span class="material-symbols-outlined moon" id="icono-modo">nightlight_round</span>
+        <span class="material-symbols-outlined sun" id="icono-modo">wb_sunny</span>
+    </button>
+
+    <div class="contenido">
+        {% if usuario %}
+            <div class="mensaje-bienvenida">
+                <p>¡Bienvenido, {{ usuario }}!</p>
+            </div>
+            <div class="botones">
+                <a href="{{ url_for('index') }}">
+                    <button class="button">Predicciones CSV</button>
+                </a>
+                <a href="{{ url_for('predecir_individual') }}">
+                    <button class="button">Predecir Individualmente</button>
+                </a>
+                <a href="{{ url_for('mostrar_historial') }}">
+                    <button class="button">Ver Historial de Usuarios</button>
+                </a>
+                <a href="{{ url_for('logout') }}">
+                    <button class="button">Cerrar sesión</button>
+                </a>
+            </div>
+            
+        {% else %}
+            <div class="mensaje-bienvenida">
+                <p>Ingrese nombre de usuario</p>
+                <form action="/" method="post">
+                    <input type="text" name="nombre_usuario" placeholder="Nombre de usuario" required>
+                    <button class="button" type="submit">Ingresar</button>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+
+    <script>
+        // Función para cambiar entre modo oscuro y claro
+        function cambiarModo() {
+            const modoOscuro = document.body.classList.contains("dark-mode");
+            const nuevoModo = modoOscuro ? 'false' : 'true';
+
+            fetch('/cambiar_modo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 'modo_oscuro': nuevoModo })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.body.classList.toggle("dark-mode", !modoOscuro);
+
+                const sol = document.querySelector(".sun");
+                const luna = document.querySelector(".moon");
+                if (!modoOscuro) {
+                    sol.style.display = "none";
+                    luna.style.display = "block";
+                } else {
+                    sol.style.display = "block";
+                    luna.style.display = "none";
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+
+        // Recuperar la preferencia de modo oscuro
+        document.addEventListener("DOMContentLoaded", function() {
+            const modoOscuro = localStorage.getItem('modo_oscuro') === 'true';
+            if (modoOscuro) {
+                document.body.classList.add('dark-mode');
+            }
+        });
+    </script>
+</body>
+</html>

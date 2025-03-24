@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empleados con Riesgo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" />
+    <style>
+        body {
+            background: linear-gradient(#45455c, #1d1c47);
+            min-height: 100vh;
+            transition: background 0.5s ease;
+        }
+        .popup {
+            width: 420px;
+            height: auto;
+            background: linear-gradient(#1d1c47, #45455c);
+            overflow: hidden;
+            border-radius: 15px;
+            box-shadow: 0 0 128px rgba(0, 0, 0, 0.1), 0 32px 64px -48px rgba(0, 0, 0, 0.5);
+            margin: 20px auto;
+            padding: 20px;
+            transition: background 0.5s ease, box-shadow 0.5s ease;
+        }
+    </style>
+</head>
+<body class="{{ 'dark-mode' if modo_oscuro == 'true' else '' }}">
+    <!-- Botón de modo oscuro y claro -->
+    <button id="modo-toggle" onclick="cambiarModo()">
+        <span class="material-symbols-outlined moon" id="icono-modo">nightlight_round</span>
+        <span class="material-symbols-outlined sun" id="icono-modo">wb_sunny</span>
+    </button>
+
+    <h1>Empleados con Riesgo</h1>
+
+    {% if empleados_riesgo %}
+        <div class="empleados-container">
+            {% for empleado in empleados_riesgo %}
+                <div class="empleado popup">
+                    <!-- Avatar del empleado usando el hash generado -->
+                    <img src="https://www.gravatar.com/avatar/{{ empleado.avatar_hash }}?d=identicon" alt="Avatar de {{ empleado.id }}" class="avatar">
+
+                    <!-- Información del empleado -->
+                    <div class="empleado-info">
+                        <h3>ID: {{ empleado.id }}</h3>
+                        <button class="ver-detalles-btn" onclick="mostrarDetalles('{{ empleado.id }}')">Ver Detalles</button>
+
+                        <!-- Detalles ocultos de cada empleado -->
+                        <div id="detalles-{{ empleado.id }}" class="detalles" style="display:none;">
+                            <p><strong>Horas Trabajadas:</strong> {{ empleado.horas_trabajadas }}</p>
+                            <p><strong>Ausencias:</strong> {{ empleado.ausencias }}</p>
+                            <p><strong>Edad:</strong> {{ empleado.edad }}</p>
+                            <p><strong>Salario:</strong> {{ empleado.salario }}</p>
+                            <p><strong>Riesgo:</strong> {{ empleado.riesgo }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No se encontraron empleados con riesgo.</p>
+    {% endif %}
+
+    <!-- Barra lateral (inicialmente oculta) -->
+    <div id="barra-lateral" class="barra-lateral">
+        <button class="cerrar" onclick="cerrarDetalles()">Cerrar</button>
+        <div id="barra-contenido"></div>
+    </div>
+
+    <script>
+        function mostrarDetalles(id) {
+            // Mostrar la barra lateral y cargar los detalles del empleado
+            const barraLateral = document.getElementById('barra-lateral');
+            const barraContenido = document.getElementById('barra-contenido');
+            const detalles = document.getElementById('detalles-' + id);
+            barraContenido.innerHTML = detalles.innerHTML; // Cargar los detalles
+            barraLateral.style.width = '300px'; // Mostrar la barra lateral
+        }
+
+        function cerrarDetalles() {
+            // Ocultar la barra lateral
+            const barraLateral = document.getElementById('barra-lateral');
+            barraLateral.style.width = '0'; // Ocultar la barra lateral
+        }
+
+        function cambiarModo() {
+            const modoOscuro = document.body.classList.contains("dark-mode");
+            const nuevoModo = modoOscuro ? 'false' : 'true';
+
+            fetch('/cambiar_modo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 'modo_oscuro': nuevoModo })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.body.classList.toggle("dark-mode", !modoOscuro);
+
+                const sol = document.querySelector(".sun");
+                const luna = document.querySelector(".moon");
+                if (!modoOscuro) {
+                    sol.style.display = "none";
+                    luna.style.display = "block";
+                } else {
+                    sol.style.display = "block";
+                    luna.style.display = "none";
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>

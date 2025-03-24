@@ -1,14 +1,23 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file
+from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file, session
 import pickle
 import numpy as np
 from sklearn.linear_model import LogisticRegression
+from sklearn.preprocessing import StandardScaler
 from arbol_decision import main
 from sklearn.metrics import precision_score, recall_score, f1_score, classification_report
 import os
 import pandas as pd
 from transformar_riesgos import transformar_riesgos
+from werkzeug.utils import secure_filename
+from datetime import datetime
+import json
+import csv
+import hashlib
 
 app = Flask(__name__)
+
+app.secret_key = 'tu_clave_secreta'
+
 
 modelo = None
 df_datos = None
@@ -28,10 +37,152 @@ if not os.path.exists(output_dir):
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-@app.route('/')
+def leer_historial():
+    try:
+        with open('historial.json', 'r') as archivo:
+            contenido = archivo.read().strip()
+            if not contenido:  # Si el archivo está vacío
+                return []  # Retornar lista vacía
+            return json.loads(contenido)  # Si tiene contenido, cargar el JSON
+    except FileNotFoundError:
+        return []  # Si no existe el archivo, retornar lista vacía
+    except json.JSONDecodeError:
+        return []  # Si el archivo tiene un formato incorrecto, retornar lista vacía
+
+
+
+def guardar_historial(historial):
+    try:
+        with open('historial.json', 'w') as archivo:
+            json.dump(historial, archivo, indent=4)
+        print("Historial guardado correctamente")
+    except Exception as e:
+        print(f"Error al guardar el historial: {e}")
+
+
+
+# Función para agregar una entrada al historial
+def agregar_entrada(usuario, archivo=None):
+    historial = leer_historial()
+    nueva_entrada = {
+        "usuario": usuario,
+        "fecha": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    }
+    
+    # Solo agregar el campo archivo si es proporcionado
+    if archivo:
+        nueva_entrada["archivo"] = archivo
+    
+    historial.append(nueva_entrada)
+    guardar_historial(historial)  # Guardar el historial actualizado
+
+
+
+@app.route('/', methods=['GET', 'POST'])
+def home():
+    if request.method == 'POST':
+        session['usuario'] = request.form['nombre_usuario']
+        print(f"Usuario ingresado: {session['usuario']}")
+        agregar_entrada(session['usuario'])  # Agregar al historial cuando un usuario ingresa
+    usuario = session.get('usuario', None)
+    return render_template('inicio.html', usuario=usuario)
+
+
+
+
+
+@app.route('/logout')
+def logout():
+    session.pop('usuario', None)
+    return redirect(url_for('home'))
+
+
+
+
+@app.route('/index')
 def index():
-    modo_oscuro = request.cookies.get('modo_oscuro', 'false')
-    return render_template("index.html", modo_oscuro=modo_oscuro)
+    usuario = session.get('usuario', None)
+    return render_template("index.html", usuario=usuario)
+
+
+
+
+@app.route('/historial', methods=['GET'])
+def mostrar_historial():
+    historial = leer_historial()
+    return render_template('historial.html', historial=historial)
+
+
+@app.route('/predecir_individual', methods=['GET', 'POST'])
+def predecir_individual():
+    global modelo, x_train, x_test, y_test, x_full, df_datos
+    
+    # Verificar si el modelo está entrenado, si no lo está, entrenarlo
+    if modelo is None:
+        # Ruta del archivo CSV
+        FILEPATH = 'C:/Users/nazar/TP1-pp1/datos/empleados.csv'  # Cambia esta ruta si es necesario
+        
+        # Verificar si el archivo existe
+        if not os.path.exists(FILEPATH):
+            return jsonify({"error": f"El archivo {FILEPATH} no existe"}), 500
+        
+        try:
+            # Llamamos a la función de entrenamiento
+            modelo, x_train, x_test, y_test, x_full, df_datos = main(FILEPATH)
+        except Exception as e:
+            return jsonify({"error": f"No se pudo entrenar el modelo: {str(e)}"}), 500
+    
+    # Si se ha enviado el formulario
+    if request.method == 'POST':
+        # Recibir los datos del formulario
+        horas_trabajadas = request.form.get('horas_trabajadas')
+        ausencias = request.form.get('ausencias')
+        edad = request.form.get('edad')
+        salario = request.form.get('salario')
+        genero = request.form.get('genero')
+
+        # Validar los datos
+        if not all([horas_trabajadas, ausencias, edad, salario, genero]):
+            return jsonify({"error": "Datos incompletos"}), 400
+        
+        # Validar tipos de datos
+        try:
+            horas_trabajadas = float(horas_trabajadas)
+            ausencias = int(ausencias)
+            edad = int(edad)
+            salario = float(salario)
+        except ValueError:
+            return jsonify({"error": "Los datos deben ser numéricos"}), 400
+
+        # Codificar el género
+        if genero not in ["Femenino", "Masculino"]:
+            return jsonify({"error": "Género inválido"}), 400
+
+        genero_femenino = 1 if genero == "Femenino" else 0
+        genero_masculino = 1 if genero == "Masculino" else 0
+
+        # Crear dataframe para predecir
+        df_individual = pd.DataFrame([[horas_trabajadas, ausencias, genero_femenino, genero_masculino]], 
+                                     columns=["Horas_Trabajadas", "Ausencias", "Genero_Femenino", "Genero_Masculino"])
+        
+        # Normalizar la entrada utilizando el scaler entrenado
+        if not hasattr(predecir_individual, "scaler"):
+            scaler = StandardScaler()
+            df_individual_normalizado = scaler.fit_transform(df_individual)
+            predecir_individual.scaler = scaler
+        else:
+            scaler = predecir_individual.scaler
+            df_individual_normalizado = scaler.transform(df_individual)
+
+        # Hacer la predicción
+        prediccion = modelo.predict(df_individual_normalizado)
+        resultado = "Alto Riesgo" if prediccion[0] == 1 else "Bajo Riesgo"
+
+        # Redirigir al usuario a una página de resultados o mostrar el resultado
+        return render_template('resultado.html', resultado=resultado)
+
+    return render_template('predecir_individual.html')
+
 
 @app.route('/subir_archivo', methods=['POST'])
 def subir_archivo():
@@ -43,15 +194,29 @@ def subir_archivo():
     if file.filename == '':
         return jsonify({"error": "El archivo no tiene nombre"}), 400
 
-    if not os.path.exists(app.config['UPLOAD_FOLDER']):
-        os.makedirs(app.config['UPLOAD_FOLDER'])
+    # Asegúrate de usar secure_filename aquí para evitar problemas con nombres de archivo
+    filename = secure_filename(file.filename)
+    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
 
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], file.filename)
-    file.save(filepath)
-
-    print(f"File saved at: {filepath}")
+    # Guardar el archivo
+    try:
+        file.save(filepath)
+        print(f"File saved at: {filepath}")
+    except Exception as e:
+        return jsonify({"error": f"No se pudo guardar el archivo: {str(e)}"}), 500
+    
+    # Obtener el usuario de la sesión y agregar la entrada al historial
+    usuario = session.get('usuario', None)
+    if usuario:
+        try:
+            agregar_entrada(usuario, filename)  # Agregar al historial con el archivo subido
+            print(f"Entrada agregada al historial: {usuario} subió el archivo {filename}")
+        except Exception as e:
+            return jsonify({"error": f"No se pudo agregar al historial: {str(e)}"}), 500
 
     return jsonify({"mensaje": "Archivo subido correctamente", "filepath": filepath})
+
+
 
 @app.route('/entrenar', methods=['POST'])
 def entrenar_modelo():
@@ -130,6 +295,47 @@ def generar_csv():
         return jsonify({"error": f"Error al guardar el archivo: {str(e)}"}), 500
 
 
+
+@app.route('/resultados')
+def resultados():
+    empleados_riesgo = []
+    ruta_csv = os.path.join(output_dir, "empleados_con_riesgo.csv")
+
+    # Verifica si el archivo existe antes de intentar abrirlo
+    if not os.path.exists(ruta_csv):
+        return jsonify({"error": "El archivo empleados_con_riesgo.csv no existe. Asegúrese de generar el CSV primero."}), 404
+
+    try:
+        with open(ruta_csv, mode='r') as file:
+            reader = csv.DictReader(file)
+            # Verifica las claves del CSV
+            for row in reader:
+                # Imprime las claves de cada fila para depurar
+                print("Claves del CSV:", row.keys())  # Imprime las claves del archivo CSV para asegurarte que coincidan
+                
+                # Filtra solo empleados con "alto riesgo"
+                if row.get('Riesgo', '').lower() == 'alto riesgo':
+                    empleado = {
+                        'id': row.get('ID', ''),
+                        'horas_trabajadas': row.get('Horas Trabajadas', ''),
+                        'ausencias': row.get('Ausencias', ''),
+                        'edad': row.get('Edad', ''),
+                        'salario': row.get('Salario', ''),
+                        'riesgo': row.get('Riesgo', ''),
+                        'avatar_hash': hashlib.md5(row.get('ID', '').encode('utf-8')).hexdigest()  # Genera el hash aquí
+                    }
+                    empleados_riesgo.append(empleado)
+    except Exception as e:
+        return jsonify({"error": f"Error al leer el archivo CSV: {str(e)}"}), 500
+
+    # Asegúrate de que los datos se están agregando correctamente
+    print("Empleados con riesgo alto:", empleados_riesgo)
+
+    # Pasa los datos a la plantilla de resultados
+    return render_template('resultados.html', empleados_riesgo=empleados_riesgo)
+
+
+
 @app.route('/descargar_csv')
 def descargar_csv():
 
@@ -139,6 +345,9 @@ def descargar_csv():
         return jsonify({"error": "El archivo CSV no existe"}), 404
 
     return send_file(ruta_csv, as_attachment=True, download_name="empleados_con_riesgo.csv")
+
+
+
 
 @app.route('/cambiar_modo', methods=['POST'])
 def cambiar_modo():
@@ -152,3 +361,5 @@ if __name__ == '__main__':
     if not os.path.exists(UPLOAD_FOLDER):
         os.makedirs(UPLOAD_FOLDER)
     app.run(debug=True)
+
+  

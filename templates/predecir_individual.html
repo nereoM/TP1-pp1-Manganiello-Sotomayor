@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Predecir Individual</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+</head>
+
+<body class="{{ 'dark-mode' if modo_oscuro == 'true' else '' }}">
+
+    <!-- Botón de modo oscuro y claro -->
+    <button id="modo-toggle" onclick="cambiarModo()">
+        <span class="material-symbols-outlined moon" id="icono-modo">nightlight_round</span>
+        <span class="material-symbols-outlined sun" id="icono-modo">wb_sunny</span>
+    </button>
+
+    <div class="contenido">
+        <h1>Formulario de Predicción Individual</h1>
+        <form method="POST" action="/predecir_individual" class="formulario">
+            <label for="horas_trabajadas">Horas Trabajadas:</label>
+            <input type="number" name="horas_trabajadas" required><br>
+            
+            <label for="ausencias">Ausencias:</label>
+            <input type="number" name="ausencias" required><br>
+            
+            <label for="edad">Edad:</label>
+            <input type="number" name="edad" required><br>
+            
+            <label for="salario">Salario:</label>
+            <input type="number" name="salario" required><br>
+            
+            <label for="genero">Género:</label>
+            <select name="genero" required>
+                <option value="Masculino">Masculino</option>
+                <option value="Femenino">Femenino</option>
+            </select><br>
+            
+            <button type="submit" class="boton-principal">Predecir</button>
+        </form>
+    </div>
+
+    <script>
+        // Función para cambiar entre modo oscuro y claro
+        function cambiarModo() {
+            const modoOscuro = document.body.classList.contains("dark-mode");
+            const nuevoModo = modoOscuro ? 'false' : 'true';
+
+            fetch('/cambiar_modo', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ 'modo_oscuro': nuevoModo })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.body.classList.toggle("dark-mode", !modoOscuro);
+
+                const sol = document.querySelector(".sun");
+                const luna = document.querySelector(".moon");
+                if (!modoOscuro) {
+                    sol.style.display = "none";
+                    luna.style.display = "block";
+                } else {
+                    sol.style.display = "block";
+                    luna.style.display = "none";
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+</html>
