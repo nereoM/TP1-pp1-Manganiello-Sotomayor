@@ -31,7 +31,7 @@
     </button>
 
     <a href="{{ url_for('resultados') }}">
-        <button class="button">Ver Empleados de Alto Riesgo</button>
+        <span class="material-symbols-outlined upload-button" onclick="generarCSV()">pageview</span>
     </a>
 
     <div class="popup">
@@ -69,7 +69,7 @@
                     <div class="dot"></div>
                 </div>
                 <div class="descargar-archivo">
-                    <span class="material-symbols-outlined download-button" onclick="generarYDescargarCSV()">download_2</span>
+                    <span class="material-symbols-outlined upload-button" onclick="generarYDescargarCSV()">download_2</span>
                 </div>
             </div>
         </div>
@@ -206,6 +206,31 @@
             document.querySelectorAll('.indicator-carga').forEach(indicator => {
                 indicator.style.display = 'none';
             });
+        }
+
+        function generarCSV() {
+            return fetch('/generar_csv', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ filepath: 'ruta/del/archivo.csv' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+                return data;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                throw error;
+            });
+        }
+
+        function descargarCSV() {
+            window.location.href = "/descargar_csv";
         }
 
         function generarYDescargarCSV() {

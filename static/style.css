@@ -452,10 +452,8 @@ body.dark-mode #modo-toggle {
 }
 
 
-
-/* Cada empleado */
 .empleado {
-    background-color: #3b3b3b; /* Fondo oscuro */
+    background-color: #3b3b3b;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     padding: 20px;
@@ -477,7 +475,7 @@ body.dark-mode #modo-toggle {
     height: 80px;
     border-radius: 50%;
     margin-bottom: 10px;
-    border: 2px solid #fff; /* Borde blanco para resaltar */
+    border: 2px solid #fff;
     transition: transform 0.3s ease;
 }
 
@@ -485,11 +483,10 @@ body.dark-mode #modo-toggle {
     transform: scale(1.1);
 }
 
-/* Información del empleado */
 .empleado-info h3 {
     font-size: 1.2rem;
     margin-bottom: 10px;
-    color: #ddd; /* Texto claro */
+    color: #ddd;
 }
 
 .ver-detalles-btn {
@@ -519,7 +516,6 @@ body.dark-mode #modo-toggle {
     overflow: hidden;
 }
 
-/* Barra lateral */
 .barra-lateral {
     height: 100%;
     width: 0;
@@ -557,7 +553,6 @@ body.dark-mode #modo-toggle {
     overflow-y: auto;
 }
 
-/* Animación fade-in */
 @keyframes fadeIn {
     0% {
         opacity: 0;
@@ -565,4 +560,15 @@ body.dark-mode #modo-toggle {
     100% {
         opacity: 1;
     }
+}
+
+.empleados-container {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 10px;
+}
+
+.titulo-resultado {
+    text-align: center;
+    margin-bottom: 20px;
 }
