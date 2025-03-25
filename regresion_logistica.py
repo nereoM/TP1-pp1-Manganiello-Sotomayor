@@ -3,14 +3,10 @@ from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
 from sklearn.linear_model import LogisticRegression
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.metrics import confusion_matrix
+from sklearn.metrics import precision_score, recall_score, f1_score, classification_report
 import numpy as np
 import csv
-import matplotlib.pyplot as plt
-from sklearn.tree import plot_tree
-from sklearn.metrics import confusion_matrix
-import seaborn as sns
-import os
 
 
 def leer_y_generar_riesgo(datos_csv):
@@ -31,15 +27,29 @@ def leer_y_generar_riesgo(datos_csv):
 
     return df_datos, df_riesgos, df
 
-def main_a(ruta_archivo):
-    #ruta_script = os.path.dirname(os.path.abspath(__file__))
-    #ruta_archivo = os.path.join(ruta_script, "datos", "empleados.csv")
-    #datos_csv = os.path.abspath(ruta_archivo)
+
+def main_r(ruta_archivo):
+#datos_csv = r'C:\Users\Nereo\Desktop\TP1-pp1\datos\empleados.csv'
 
     df_datos, df_riesgos, df = leer_y_generar_riesgo(ruta_archivo)
 
     #print(df_datos)
     #print(df_riesgos)
+
+    #x = df_datos[["Horas_Trabajadas", "Ausencias"]]
+    #y = df_riesgos["Riesgo"]
+
+    #print(df_riesgos["Riesgo"].value_counts(normalize=True))
+
+    #x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=0)
+
+    #sc_x = StandardScaler()
+    #x_train = sc_x.fit_transform(x_train)
+    #x_test = sc_x.transform(x_test)
+
+    #log_reg = LogisticRegression(random_state=0)
+    #log_reg.fit(x_train, y_train)
+
     encoder = OneHotEncoder()
     genero_encoded = encoder.fit_transform(df[["Genero"]])  # Suponiendo que la columna se llama "Genero"
 
@@ -65,25 +75,21 @@ def main_a(ruta_archivo):
     print(df_datos.head())
     print(df_riesgos.head())
 
-    arbol = DecisionTreeClassifier(max_depth=2, random_state=0)
-    arbol.fit(x_train, y_train)
+    log_reg = LogisticRegression(random_state=0)
+    log_reg.fit(x_train, y_train)
 
     x_full = scaler.transform(x)
 
-    #y_pred_arbol = arbol.predict(x_test)
-    # print('Reales:     ', y_test.values.tolist())
-    # print('Prediccion: ', y_pred_arbol.tolist())
-    # print('Precision: ', precision_score(y_test, y_pred_arbol))
-    # print('Memoria: ', recall_score(y_test, y_pred_arbol))
-    # print('F1_score: ', f1_score(y_test, y_pred_arbol))
-    # print(classification_report(y_test, y_pred_arbol))
-
-    return arbol, x_train, x_test, y_test, x_full, df_original
+    return log_reg, x_train, x_test, y_test, x_full, df_original
 
 """
-cm = confusion_matrix(y_test, y_pred_arbol)
-sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=["Bajo Riesgo", "Alto Riesgo"], yticklabels=["Bajo Riesgo", "Alto Riesgo"])
-plt.xlabel("Predicción")
-plt.ylabel("Real")
-plt.show()"
+y_pred = log_reg.predict(x_test)
+
+print('Reales: ', y_test.values.tolist())
+print('Prediccion: ', y_pred.tolist())
+
+print('Precision: ', precision_score(y_test, y_pred))
+print('Memoria: ', recall_score(y_test, y_pred))
+print('F1_score: ', f1_score(y_test, y_pred))
+print(classification_report(y_test, y_pred))
 """

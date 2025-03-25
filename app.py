@@ -3,7 +3,8 @@ import pickle
 import numpy as np
 from sklearn.linear_model import LogisticRegression
 from sklearn.preprocessing import StandardScaler
-from arbol_decision import main
+from arbol_decision import main_a
+from regresion_logistica import main_r
 from sklearn.metrics import precision_score, recall_score, f1_score, classification_report
 import os
 import pandas as pd
@@ -19,15 +20,19 @@ app = Flask(__name__)
 app.secret_key = 'tu_clave_secreta'
 
 
-modelo = None
+modelo_a = None
+modelo_r = None
 df_datos = None
 df_riesgos = None
-x_train = None
-x_test = None
-y_test = None
-x_full = None
-df = None
-df_datos = None
+x_train_a = None
+x_test_a = None
+y_test_a = None
+x_full_a = None
+x_train_r = None
+x_test_r = None
+y_test_r = None 
+x_full_r = None
+df  = None
 df_unido = None
 
 output_dir = os.path.join(os.getcwd(), 'downloads')
@@ -112,16 +117,16 @@ def mostrar_historial():
 
 @app.route('/predecir_individual', methods=['GET', 'POST'])
 def predecir_individual():
-    global modelo, x_train, x_test, y_test, x_full, df_datos
+    global modelo_r, modelo_a, x_train, x_test, y_test, x_full, df_datos
 
-    if modelo is None:
+    if modelo_a is None:
         FILEPATH = 'C:/Users/nazar/TP1-pp1/datos/empleados.csv'
 
         if not os.path.exists(FILEPATH):
             return jsonify({"error": f"El archivo {FILEPATH} no existe"}), 500
         
         try:
-            modelo, x_train, x_test, y_test, x_full, df_datos = main(FILEPATH)
+            modelo_a, x_train, x_test, y_test, x_full, df_datos = main_a(FILEPATH)
         except Exception as e:
             return jsonify({"error": f"No se pudo entrenar el modelo: {str(e)}"}), 500
 
@@ -162,7 +167,7 @@ def predecir_individual():
             scaler = predecir_individual.scaler
             df_individual_normalizado = scaler.transform(df_individual)
 
-        prediccion = modelo.predict(df_individual_normalizado)
+        prediccion = modelo_a.predict(df_individual_normalizado)
         resultado = "Alto" if prediccion[0] == 1 else "Bajo"
 
     return render_template('predecir_individual.html', resultado=resultado)
@@ -199,9 +204,9 @@ def subir_archivo():
 
 
 
-@app.route('/entrenar', methods=['POST'])
-def entrenar_modelo():
-    global modelo, df_datos, df_riesgos, x_train, x_test, y_test, x_full
+@app.route('/entrenar_arbol', methods=['POST'])
+def entrenar_modelo_arbol():
+    global modelo_a, df_datos, df_riesgos, x_train_a, x_test_a, y_test_a, x_full_a
     try:
         data = request.get_json()
         filepath = data.get('filepath')
@@ -212,24 +217,24 @@ def entrenar_modelo():
         if not os.path.exists(filepath):
             return jsonify({"error": "El archivo no existe"}), 400
 
-        modelo, x_train, x_test, y_test, x_full, df_datos = main(filepath)
+        modelo_a, x_train_a, x_test_a, y_test_a, x_full_a, df_datos = main_a(filepath)
 
         return jsonify({"mensaje": "Modelo entrenado correctamente"})
     except Exception as e:
         return jsonify({"error": f"Ocurrió un error: {str(e)}"}), 500
 
     
-@app.route('/predecir', methods=['POST'])
-def predecir_modelo():
-    global modelo, df_datos, df_riesgos, x_train, x_test, y_test, x_full, df, df_unido
+@app.route('/predecir_arbol', methods=['POST'])
+def predecir_modelo_arbol():
+    global modelo_a, df_datos, df_riesgos, x_train_a, x_test_a, y_test_a, x_full_a, df, df_unido
     
-    if modelo is None:
+    if modelo_a is None:
         return jsonify({"error": "Primero entrena el modelo"}), 400
     
     if df is None:
         df = pd.DataFrame()
     try:
-        prediccion = modelo.predict(x_test)
+        prediccion = modelo_a.predict(x_test_a)
         print(f"Predicción realizada: {prediccion}")
     except Exception as e:
         print(f"Error al predecir: {e}")
@@ -238,7 +243,7 @@ def predecir_modelo():
     if "Riesgo" not in df.columns:
         df["Riesgo"] = None
 
-    df["Riesgo"] = modelo.predict(x_full)
+    df["Riesgo"] = modelo_a.predict(x_full_a)
 
     df_unido = pd.concat([df_datos, df], axis=1)
 
@@ -246,12 +251,69 @@ def predecir_modelo():
 
     #df_final = transformar_riesgo(df_unido)
 
-    precision = precision_score(y_test, prediccion, average='binary')
-    memoria = recall_score(y_test, prediccion, average='binary')
-    f1 = f1_score(y_test, prediccion, average='binary')
+    precision = precision_score(y_test_a, prediccion, average='binary')
+    memoria = recall_score(y_test_a, prediccion, average='binary')
+    f1 = f1_score(y_test_a, prediccion, average='binary')
 
     return jsonify({
-        "predicciones": prediccion.tolist(),
+        "precision": precision,
+        "memoria": memoria,
+        "f1": f1,
+        "dataframe": df_unido.to_dict(orient='records')
+    })
+
+@app.route('/entrenar_regresion', methods=['POST'])
+def entrenar_modelo_regresion():
+    global modelo_r, df_datos, df_riesgos, x_train_r, x_test_r, y_test_r, x_full_r
+    try:
+        data = request.get_json()
+        filepath = data.get('filepath')
+
+        if not filepath:
+            return jsonify({"error": "No se recibió el filepath"}), 400
+
+        if not os.path.exists(filepath):
+            return jsonify({"error": "El archivo no existe"}), 400
+
+        modelo_r, x_train_r, x_test_r, y_test_r, x_full_r, df_datos = main_r(filepath)
+
+        return jsonify({"mensaje": "Modelo entrenado correctamente"})
+    except Exception as e:
+        return jsonify({"error": f"Ocurrió un error: {str(e)}"}), 500
+
+    
+@app.route('/predecir_regresion', methods=['POST'])
+def predecir_modelo_regresion():
+    global modelo_r, df_datos, df_riesgos, x_train_r, x_test_r, y_test_r, x_full_r, df, df_unido
+    
+    if modelo_r is None:
+        return jsonify({"error": "Primero entrena el modelo"}), 400
+    
+    if df is None:
+        df = pd.DataFrame()
+    try:
+        prediccion = modelo_r.predict(x_test_r)
+        print(f"Predicción realizada: {prediccion}")
+    except Exception as e:
+        print(f"Error al predecir: {e}")
+        return jsonify({"error": f"Error al predecir: {str(e)}"}), 500
+    
+    if "Riesgo" not in df.columns:
+        df["Riesgo"] = None
+
+    df["Riesgo"] = modelo_a.predict(x_full_r)
+
+    df_unido = pd.concat([df_datos, df], axis=1)
+
+    print(df_unido.head())
+
+    #df_final = transformar_riesgo(df_unido)
+
+    precision = precision_score(y_test_r, prediccion, average='binary')
+    memoria = recall_score(y_test_r, prediccion, average='binary')
+    f1 = f1_score(y_test_r, prediccion, average='binary')
+
+    return jsonify({
         "precision": precision,
         "memoria": memoria,
         "f1": f1,

@@ -33,9 +33,6 @@
     
     </div>
     
-    
-    
-
     <img src="https://www.ungs.edu.ar/wp-content/uploads/2024/06/logo_ungs_512.png" alt="logo ungs">
 
     <!-- Botón con icono de Sol y Luna -->
@@ -49,7 +46,7 @@
             <div class="titulo">
                 <h1>Predicción de Riesgo de Salud Ocupacional</h1>
                 <div class="modelo">
-                    <h2>Modelo de Arboles de decisión</h2>
+                    <h2>Modelo de Regresión lineal</h2>
                 </div>
             </div>
             <div class="botones">
@@ -163,7 +160,7 @@
                 return;
             }
 
-            fetch('/entrenar', {
+            fetch('/entrenar_regresion', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -191,7 +188,7 @@
         }
 
         function predecirModelo() {
-            fetch('/predecir', { method: 'POST' })
+            fetch('/predecir_regresion', { method: 'POST' })
                 .then(response => response.json())
                 .then(data => {
                     setTimeout(() => {

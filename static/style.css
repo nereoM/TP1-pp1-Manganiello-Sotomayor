@@ -3,7 +3,7 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Times New Roman', Times, serif;
+    font-family: 'Roboto', sans-serif;
 }
 
 .menu-desplegable {
@@ -219,7 +219,6 @@ body:not(.dark-mode) .material-symbols-outlined.upload-button:hover {
     }
 }
 
-/* Modo oscuro */
 body.dark-mode {
     background: linear-gradient(#1a1a2e, #16213e);
     color: white;
@@ -247,7 +246,7 @@ body:not(.dark-mode) .botones {
 }
 
 body:not(.dark-mode) {
-    background: linear-gradient(#ffffff, #fea2f9); /* Fondo blanco/clarito */
+    background: linear-gradient(#ffffff, #fea2f9);
     color: #333;
 }
 
@@ -294,42 +293,36 @@ body:not(.dark-mode) #modo-toggle .material-symbols-outlined.moon {
     color: #bbb;
 }
 
-/* Centraliza todo el contenido */
 .contenido {
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh; /* Hace que el contenido ocupe toda la altura de la pantalla */
+    height: 100vh;
     flex-direction: column;
     text-align: center;
     padding: 0 20px;
-    background-color: #f8f9fa; /* Fondo claro por defecto */
+    background-color: #f8f9fa;
     transition: background-color 0.3s ease;
 }
 
-/* Estilo para el modo oscuro y claro */
-/* Modo claro */
 body:not(.dark-mode) {
-    background: linear-gradient(#ffffff, #fea2f9); /* Fondo blanco/rosado */
+    background: linear-gradient(#ffffff, #fea2f9);
     color: #333;
 }
 
-/* Modo oscuro */
 body.dark-mode {
     background: linear-gradient(#1a1a2e, #16213e);
     color: white;
 }
 
-/* Estilo para las páginas específicas */
 body:not(.dark-mode) .contenido {
-    background: linear-gradient(#ffffff, #fea2f9); /* Fondo rosado para modo claro */
+    background: linear-gradient(#ffffff, #fea2f9);
 }
 
 body.dark-mode .contenido {
-    background: linear-gradient(#1a1a2e, #16213e); /* Fondo oscuro para modo oscuro */
+    background: linear-gradient(#1a1a2e, #16213e);
 }
 
-/* Estilo de la página de inicio */
 body:not(.dark-mode) .mensaje-bienvenida p {
     color: #333;
 }
@@ -338,7 +331,6 @@ body.dark-mode .mensaje-bienvenida p {
     color: #e0e0e0;
 }
 
-/* Estilo de los botones */
 .boton-principal {
     background-color: #4682b4;
     border: none;
@@ -358,10 +350,6 @@ body.dark-mode .mensaje-bienvenida p {
     transform: scale(1.05);
 }
 
-/* El resto del estilo sigue igual */
-
-
-/* Botón de alternar modo */
 #modo-toggle {
     background-color: transparent;
     border: none;
@@ -376,7 +364,6 @@ body.dark-mode #modo-toggle {
     color: #e0e0e0;
 }
 
-/* Formulario */
 .formulario input {
     width: 100%;
     padding: 12px;
@@ -392,7 +379,6 @@ body.dark-mode #modo-toggle {
     outline: none;
 }
 
-/* Botón de formulario */
 .formulario button {
     background-color: #4682b4;
     border: none;
@@ -410,14 +396,12 @@ body.dark-mode #modo-toggle {
     transform: scale(1.05);
 }
 
-/* Estilo del formulario cuando no hay usuario */
 .formulario {
     width: 100%;
-    max-width: 350px; /* Limitar el tamaño máximo del formulario */
+    max-width: 350px;
     margin: 0 auto;
 }
 
-/* Ajuste de visualización de botones */
 .botones {
     display: flex;
     flex-direction: column;
@@ -469,7 +453,6 @@ body.dark-mode #modo-toggle {
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
 }
 
-/* Avatar */
 .avatar {
     width: 80px;
     height: 80px;
@@ -573,19 +556,17 @@ body.dark-mode #modo-toggle {
     margin-bottom: 20px;
 }
 
-/* Estilo del ícono de ayuda */
 .icono-info {
     position: relative;
     cursor: pointer;
     font-size: 24px;
-    color: #007bff;  /* Cambia el color si lo prefieres */
+    color: #007bff;
 }
 
-/* Estilo del mensaje emergente (tooltip) */
 .icono-info::after {
     content: attr(data-tooltip);
     position: absolute;
-    top: 35px;  /* Ajusta el margen superior si lo necesitas */
+    top: 35px;
     left: 50%;
     transform: translateX(-50%);
     background-color: #333;
@@ -598,23 +579,20 @@ body.dark-mode #modo-toggle {
     transition: opacity 0.3s;
     white-space: nowrap;
     z-index: 10;
-    max-width: 200px;  /* Limita el ancho del tooltip */
-    word-wrap: break-word;  /* Asegura que el texto largo se ajuste */
+    max-width: 200px;
+    word-wrap: break-word;
 }
 
-/* Mostrar el tooltip al pasar el mouse */
 .icono-info:hover::after {
     visibility: visible;
     opacity: 1;
 }
 
-/* Ajustes cuando el tooltip está cerca del borde de la pantalla */
 .icono-info:hover::after {
     left: 50%;
     transform: translateX(-50%);
 }
 
-/* Añadir desplazamiento del tooltip si está demasiado cerca del borde */
 .icono-info:hover::after {
-    left: calc(50% - 120px); /* Modifica este valor si el tooltip aún se desborda */
+    left: calc(50% - 120px);
 }
