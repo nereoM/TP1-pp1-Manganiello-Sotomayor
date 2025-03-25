@@ -596,3 +596,165 @@ body.dark-mode #modo-toggle {
 .icono-info:hover::after {
     left: calc(50% - 120px);
 }
+
+.mensaje-bienvenida {
+    text-align: center;
+    color: white;
+    font-size: 20px;
+    margin-bottom: 50px; 
+}
+
+.mensaje-bienvenida p {
+    margin-bottom: 15px; 
+}
+
+input[name="nombre_usuario"] {
+    width: 100%;
+    padding: 15px;
+    border-radius: 10px;
+    border: 2px solid #ffffff;
+    margin-bottom: 25px; /* Aumenta la distancia con el siguiente elemento */
+    font-size: 16px;
+    color: white;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+    text-align: center;
+}
+
+/* Efecto de enfoque */
+input[name="nombre_usuario"]:focus {
+    outline: none;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.7);
+    border-color: #3498db;
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Placeholder */
+input[name="nombre_usuario"]::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+/* Estilo en modo oscuro */
+body.dark-mode input[name="nombre_usuario"] {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #444;
+    color: white;
+}
+
+
+
+/* Estilo al enfocarse en modo oscuro */
+body.dark-mode input[name="nombre_usuario"]:focus {
+    border-color: #3498db;
+    box-shadow: 0 0 8px rgba(52, 152, 219, 0.7);
+}
+
+input:not(.dark-mode)[name="nombre_usuario"]::placeholder {
+    color: rgba(8, 8, 8, 0.6);
+}
+
+body:not(.dark-mode) input[name="nombre_usuario"] {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: #000000;
+    color: rgb(0, 0, 0);
+}
+
+body:not(.dark-mode) input[name="nombre_usuario"]:focus {
+    border-color: #9c0099;
+    box-shadow: 0 0 8px rgba(250, 250, 250, 0.7);
+}
+
+
+
+
+.boton_ingreso {
+    background: linear-gradient(135deg, #6a11cb, #2575fc);
+    border: none;
+    color: white;
+    padding: 14px 28px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    width: 100%;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+
+.boton_ingreso:hover {
+    background: linear-gradient(135deg, #833ab4, #1e90ff);
+    box-shadow: 0 0 20px rgba(130, 100, 255, 0.8);
+    transform: scale(1.05);
+}
+
+.boton_ingreso:active {
+    transform: scale(0.95);
+}
+
+
+.boton_ingreso::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: rgba(255, 255, 255, 0.2);
+    transition: all 0.3s ease;
+}
+
+.boton_ingreso:hover::before {
+    left: 100%;
+}
+.tabla-historial {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.tabla-historial th, .tabla-historial td {
+    padding: 12px;
+    text-align: left;
+}
+
+.tabla-historial th {
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+}
+
+.tabla-historial tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+.tabla-historial tr:hover {
+    background-color: #e0e0e0;
+}
+
+.tabla-historial td {
+    border-bottom: 1px solid #ddd;
+}
+
+/* Estilo del enlace "Volver al inicio" */
+.boton-volver {
+    display: inline-block;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    margin-top: 20px;
+    text-align: center;
+}
+
+.boton-volver:hover {
+    background-color: #45a049;
+}
+
+.boton-volver:active {
+    background-color: #3e8e41;
+}
