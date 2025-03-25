@@ -18,18 +18,12 @@
             <span class="material-symbols-outlined">menu</span>
         </button>
         <ul class="menu-opciones">
-            <li><a href="index.html">Modelo: Árbol de decisión</a></li>
-            <li><a href="index_regresion.html">Modelo: Regresión logística</a></li>
-            <li><a href="#">Generar CSV</a></li>
+            <li><a href="/index">Modelo: Árbol de decisión</a></li>
+            <li><a href="/regresion">Modelo: Regresión logística</a></li>
         </ul>
     </div>
 
     <div id="informacion">
-        
-            <span class="icono-info" data-tooltip="Este modelo predice el riesgo de problemas de salud ocupacional 
-            basándose en las horas trabajadas, ausencias, salario y género.">
-                <i class="material-icons">help_outline</i>
-            </span>
     
     </div>
     
@@ -46,7 +40,10 @@
             <div class="titulo">
                 <h1>Predicción de Riesgo de Salud Ocupacional</h1>
                 <div class="modelo">
-                    <h2>Modelo de Regresión lineal</h2>
+                    <h2>Modelo de Regresión logística</h2>
+                    <span class="icono-info" data-tooltip="Este modelo predice el riesgo de problemas de salud ocupacional basándose en las horas trabajadas, ausencias, salario y género.">
+                        <i class="material-icons">help_outline</i>
+                    </span>
                 </div>
             </div>
             <div class="botones">
@@ -76,7 +73,8 @@
                     <div class="dot"></div>
                 </div>
                 <div class="descargar-archivo">
-                    <span class="material-symbols-outlined upload-button" onclick="generarYDescargarCSV()">download_2</span>
+                    <h3>Descargar CSV | Mostrar empleados</h3>
+                    <span class="material-symbols-outlined upload-button" onclick="generarYDescargarCSV()">download</span>
 
                     <a href="{{ url_for('resultados') }}">
                         <span class="material-symbols-outlined upload-button" onclick="generarCSV()">pageview</span>
@@ -200,7 +198,7 @@
                             let f1Texto = "F1 Score: " + data.f1;
 
                             document.getElementById("resultado-prediccion").innerHTML =
-                                `${prediccionesTexto}<br>${precisionTexto}<br>${memoriaTexto}<br>${f1Texto}`;
+                                `${precisionTexto}<br>${memoriaTexto}<br>${f1Texto}`;
                         }
 
                         document.querySelectorAll('.indicator-carga').forEach(indicator => {

@@ -42,6 +42,7 @@ if not os.path.exists(output_dir):
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+
 def leer_historial():
     try:
         with open('historial.json', 'r') as archivo:
@@ -53,7 +54,6 @@ def leer_historial():
         return []
     except json.JSONDecodeError:
         return []
-
 
 
 def guardar_historial(historial):
@@ -79,7 +79,6 @@ def agregar_entrada(usuario, archivo=None):
     guardar_historial(historial)
 
 
-
 @app.route('/', methods=['GET', 'POST'])
 def home():
     if request.method == 'POST':
@@ -90,23 +89,21 @@ def home():
     return render_template('inicio.html', usuario=usuario)
 
 
-
-
-
 @app.route('/logout')
 def logout():
     session.pop('usuario', None)
     return redirect(url_for('home'))
 
 
-
-
 @app.route('/index')
 def index():
     usuario = session.get('usuario', None)
-    return render_template("index.html", usuario=usuario)
+    return render_template('index.html', usuario=usuario)
 
 
+@app.route("/regresion")
+def regresion():
+    return render_template("index_regresion.html")
 
 
 @app.route('/historial', methods=['GET'])
@@ -203,7 +200,6 @@ def subir_archivo():
     return jsonify({"mensaje": "Archivo subido correctamente", "filepath": filepath})
 
 
-
 @app.route('/entrenar_arbol', methods=['POST'])
 def entrenar_modelo_arbol():
     global modelo_a, df_datos, df_riesgos, x_train_a, x_test_a, y_test_a, x_full_a
@@ -262,6 +258,7 @@ def predecir_modelo_arbol():
         "dataframe": df_unido.to_dict(orient='records')
     })
 
+
 @app.route('/entrenar_regresion', methods=['POST'])
 def entrenar_modelo_regresion():
     global modelo_r, df_datos, df_riesgos, x_train_r, x_test_r, y_test_r, x_full_r
@@ -301,7 +298,7 @@ def predecir_modelo_regresion():
     if "Riesgo" not in df.columns:
         df["Riesgo"] = None
 
-    df["Riesgo"] = modelo_a.predict(x_full_r)
+    df["Riesgo"] = modelo_r.predict(x_full_r)
 
     df_unido = pd.concat([df_datos, df], axis=1)
 
@@ -319,6 +316,7 @@ def predecir_modelo_regresion():
         "f1": f1,
         "dataframe": df_unido.to_dict(orient='records')
     })
+
 
 @app.route('/generar_csv', methods=['POST'])
 def generar_csv():
@@ -338,7 +336,6 @@ def generar_csv():
         return jsonify({"error": f"Error al guardar el archivo: {str(e)}"}), 500
 
 
-
 @app.route('/resultados')
 def resultados():
     empleados_riesgo = []
@@ -356,7 +353,7 @@ def resultados():
                 if row.get('Riesgo', '').lower() == 'alto riesgo':
                     empleado = {
                         'id': row.get('ID', ''),
-                        'horas_trabajadas': row.get('Horas Trabajadas', ''),
+                        'horas_trabajadas': row.get('Horas_Trabajadas', ''),
                         'ausencias': row.get('Ausencias', ''),
                         'edad': row.get('Edad', ''),
                         'salario': row.get('Salario', ''),
@@ -372,7 +369,6 @@ def resultados():
     return render_template('resultados.html', empleados_riesgo=empleados_riesgo)
 
 
-
 @app.route('/descargar_csv')
 def descargar_csv():
 
@@ -382,8 +378,6 @@ def descargar_csv():
         return jsonify({"error": "El archivo CSV no existe"}), 404
 
     return send_file(ruta_csv, as_attachment=True, download_name="empleados_con_riesgo.csv")
-
-
 
 
 @app.route('/cambiar_modo', methods=['POST'])
