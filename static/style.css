@@ -758,3 +758,80 @@ body:not(.dark-mode) input[name="nombre_usuario"]:focus {
 .boton-volver:active {
     background-color: #3e8e41;
 }
+
+header {
+    background-color: #2c3e50;
+    color: white;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.matrix-container {
+    flex: 1;
+    min-width: 300px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.matrix-img {
+    width: 100%;
+    border: 1px solid #eee;
+    border-radius: 4px;
+    transition: transform 0.3s;
+}
+
+.matrix-img:hover {
+    transform: scale(1.02);
+}
+
+.info-panel {
+    flex: 1;
+    min-width: 300px;
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.metrics {
+    margin-top: 20px;
+}
+
+.metric-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.download-btn {
+    display: inline-block;
+    background-color: #3498db;
+    color: white;
+    padding: 10px 15px;
+    text-decoration: none;
+    border-radius: 4px;
+    margin-top: 15px;
+    transition: background-color 0.3s;
+}
+
+.download-btn:hover {
+    background-color: #2980b9;
+}
+
+footer {
+    text-align: center;
+    margin-top: 40px;
+    color: #7f8c8d;
+    font-size: 14px;
+}
+
+@media (max-width: 768px) {
+    .container {
+        flex-direction: column;
+    }
+}

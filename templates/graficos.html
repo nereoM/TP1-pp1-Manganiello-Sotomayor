@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Riesgo - Matriz de Confusión</title>
+</head>
+<body>
+    <header>
+        <h1>Análisis de Riesgo Laboral</h1>
+        <p>Matriz de Confusión - Modelo Predictivo</p>
+    </header>
+    
+    <div class="container">
+        <div class="matrix-container">
+            <h2>Matriz de Confusión</h2>
+            <p>Visualización del desempeño del modelo de clasificación:</p>
+
+            <img src="{{ url_for('imagenes_files', filename='matriz_riesgos.png') }}" alt="Matriz">
+            
+            <div class="zoom-controls">
+                <button onclick="zoomIn()">+ Zoom</button>
+                <button onclick="zoomOut()">- Zoom</button>
+                <button onclick="resetZoom()">Reset</button>
+            </div>
+            
+            <a href="../resultados/matriz_riesgos.png" download="matriz_riesgos.png" class="download-btn">
+                Descargar Matriz
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // Funciones para el zoom de la imagen
+        let currentScale = 1;
+        const matrixImage = document.getElementById('matrixImage');
+        
+        function zoomIn() {
+            currentScale += 0.1;
+            matrixImage.style.transform = `scale(${currentScale})`;
+        }
+        
+        function zoomOut() {
+            if (currentScale > 0.5) {
+                currentScale -= 0.1;
+                matrixImage.style.transform = `scale(${currentScale})`;
+            }
+        }
+        
+        function resetZoom() {
+            currentScale = 1;
+            matrixImage.style.transform = 'scale(1)';
+        }
+    </script>
+</body>
+</html>
+        
+

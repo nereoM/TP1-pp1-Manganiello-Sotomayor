@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file, session
+from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file, session, send_from_directory
 import pickle
 import numpy as np
 from sklearn.linear_model import LogisticRegression
@@ -14,12 +14,13 @@ from datetime import datetime
 import json
 import csv
 import hashlib
+from generar_graficos import guardar_matriz_confusion
 
 app = Flask(__name__)
 
 app.secret_key = 'tu_clave_secreta'
 
-
+# Variables globales, las usamos para guardar informacion que queremos utilizar en mas de una funcion
 modelo_a = None
 modelo_r = None
 df_datos = None
@@ -35,6 +36,7 @@ x_full_r = None
 df  = None
 df_unido = None
 
+# creacion de la carpeta uploads
 output_dir = os.path.join(os.getcwd(), 'downloads')
 if not os.path.exists(output_dir):
     os.makedirs(output_dir)
@@ -43,6 +45,7 @@ UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
+# lee el historial de personas que subieron archivos
 def leer_historial():
     try:
         with open('historial.json', 'r') as archivo:
@@ -78,6 +81,7 @@ def agregar_entrada(usuario, archivo=None):
     historial.append(nueva_entrada)
     guardar_historial(historial)
 
+# funciones utilizadas para rutas
 
 @app.route('/', methods=['GET', 'POST'])
 def home():
@@ -105,6 +109,13 @@ def index():
 def regresion():
     return render_template("index_regresion.html")
 
+@app.route("/graficos")
+def graficos():
+    return render_template("graficos.html")
+
+@app.route('/imagenes/<path:filename>')
+def imagenes_files(filename):
+    return send_from_directory(os.path.join(app.root_path, 'imagenes'), filename)
 
 @app.route('/historial', methods=['GET'])
 def mostrar_historial():
@@ -170,6 +181,8 @@ def predecir_individual():
     return render_template('predecir_individual.html', resultado=resultado)
 
 
+# 
+
 @app.route('/subir_archivo', methods=['POST'])
 def subir_archivo():
     if 'file' not in request.files:
@@ -200,6 +213,8 @@ def subir_archivo():
     return jsonify({"mensaje": "Archivo subido correctamente", "filepath": filepath})
 
 
+# funcion para entrenar el modelo utilizando arboles de decision
+
 @app.route('/entrenar_arbol', methods=['POST'])
 def entrenar_modelo_arbol():
     global modelo_a, df_datos, df_riesgos, x_train_a, x_test_a, y_test_a, x_full_a
@@ -213,12 +228,15 @@ def entrenar_modelo_arbol():
         if not os.path.exists(filepath):
             return jsonify({"error": "El archivo no existe"}), 400
 
+        # llamamos a la funcion main de arbol_decision, donde se encuentra la logica principal del entrenamiento del modelo
         modelo_a, x_train_a, x_test_a, y_test_a, x_full_a, df_datos = main_a(filepath)
 
         return jsonify({"mensaje": "Modelo entrenado correctamente"})
     except Exception as e:
         return jsonify({"error": f"Ocurrió un error: {str(e)}"}), 500
 
+    
+# funcion para predecir el modelo, utilizando el conjunto de entrenamiento y el completo
     
 @app.route('/predecir_arbol', methods=['POST'])
 def predecir_modelo_arbol():
@@ -230,6 +248,7 @@ def predecir_modelo_arbol():
     if df is None:
         df = pd.DataFrame()
     try:
+        df = pd.DataFrame()
         prediccion = modelo_a.predict(x_test_a)
         print(f"Predicción realizada: {prediccion}")
     except Exception as e:
@@ -245,11 +264,14 @@ def predecir_modelo_arbol():
 
     print(df_unido.head())
 
-    #df_final = transformar_riesgo(df_unido)
-
+    # metricas para medir el rendimiento del modelo
     precision = precision_score(y_test_a, prediccion, average='binary')
     memoria = recall_score(y_test_a, prediccion, average='binary')
     f1 = f1_score(y_test_a, prediccion, average='binary')
+    
+    guardar_matriz_confusion(prediccion, x_test_a, y_test_a, 
+                         clases=['Bajo Riesgo', 'Alto Riesgo'],
+                         nombre_archivo='matriz_riesgos.png')
 
     return jsonify({
         "precision": precision,
@@ -258,6 +280,8 @@ def predecir_modelo_arbol():
         "dataframe": df_unido.to_dict(orient='records')
     })
 
+
+# funcion para entrenar el modelo utilizando regresion logistica
 
 @app.route('/entrenar_regresion', methods=['POST'])
 def entrenar_modelo_regresion():
@@ -272,12 +296,16 @@ def entrenar_modelo_regresion():
         if not os.path.exists(filepath):
             return jsonify({"error": "El archivo no existe"}), 400
 
+        # llamamos a la funcion main de regresion_logistica, donde se encuentra la logica principal del entrenamiento del modelo
+
         modelo_r, x_train_r, x_test_r, y_test_r, x_full_r, df_datos = main_r(filepath)
 
         return jsonify({"mensaje": "Modelo entrenado correctamente"})
     except Exception as e:
         return jsonify({"error": f"Ocurrió un error: {str(e)}"}), 500
 
+    
+# funcion para predecir el modelo, utilizando el conjunto de entrenamiento y el completo
     
 @app.route('/predecir_regresion', methods=['POST'])
 def predecir_modelo_regresion():
@@ -289,6 +317,7 @@ def predecir_modelo_regresion():
     if df is None:
         df = pd.DataFrame()
     try:
+        df = pd.DataFrame()
         prediccion = modelo_r.predict(x_test_r)
         print(f"Predicción realizada: {prediccion}")
     except Exception as e:
@@ -304,11 +333,15 @@ def predecir_modelo_regresion():
 
     print(df_unido.head())
 
-    #df_final = transformar_riesgo(df_unido)
+    # metricas para medir la eficiencia del modelo
 
     precision = precision_score(y_test_r, prediccion, average='binary')
     memoria = recall_score(y_test_r, prediccion, average='binary')
     f1 = f1_score(y_test_r, prediccion, average='binary')
+    
+    guardar_matriz_confusion(prediccion, x_test_a, y_test_a, 
+                         clases=['Bajo Riesgo', 'Alto Riesgo'],
+                         nombre_archivo='matriz_riesgos.png')
 
     return jsonify({
         "precision": precision,
@@ -317,6 +350,8 @@ def predecir_modelo_regresion():
         "dataframe": df_unido.to_dict(orient='records')
     })
 
+
+# generamos el csv con las predicciones de riesgos
 
 @app.route('/generar_csv', methods=['POST'])
 def generar_csv():
@@ -335,6 +370,8 @@ def generar_csv():
     except Exception as e:
         return jsonify({"error": f"Error al guardar el archivo: {str(e)}"}), 500
 
+# lee del csv generado todos los empleados que sean de alto riesgo
+# para luego guardarlos y enviarlos al front
 
 @app.route('/resultados')
 def resultados():
@@ -369,6 +406,8 @@ def resultados():
     return render_template('resultados.html', empleados_riesgo=empleados_riesgo)
 
 
+# envia la ruta para descargar el csv con las predicciones
+
 @app.route('/descargar_csv')
 def descargar_csv():
 
@@ -379,6 +418,7 @@ def descargar_csv():
 
     return send_file(ruta_csv, as_attachment=True, download_name="empleados_con_riesgo.csv")
 
+# cambia entre el modo oscuro y claro del fondo
 
 @app.route('/cambiar_modo', methods=['POST'])
 def cambiar_modo():

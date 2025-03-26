@@ -20,7 +20,7 @@ def leer_y_generar_riesgo(datos_csv):
         0.1 * (df["Salario"] / df["Salario"].max())
     )
 
-    df["Riesgo"] = np.where(prob_riesgo > 0.5, 1, 0)
+    df["Riesgo"] = np.where(prob_riesgo > 0.52, 1, 0)
 
     df_datos = df[["ID", "Horas_Trabajadas", "Ausencias", "Edad", "Salario"]].copy()
     df_riesgos = df[["ID", "Nombre", "Riesgo"]].copy()

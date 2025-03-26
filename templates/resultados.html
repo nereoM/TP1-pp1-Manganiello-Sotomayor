@@ -34,7 +34,7 @@
     </button>
 
     <div class="titulo-resultado">
-        <h1>Empleados con Riesgo</h1>
+        <h1>Empleados clasificados como de "Alto riesgo".</h1>
     </div>
 
     {% if empleados_riesgo %}
@@ -70,18 +70,17 @@
 
     <script>
         function mostrarDetalles(id) {
-            // Mostrar la barra lateral y cargar los detalles del empleado
             const barraLateral = document.getElementById('barra-lateral');
             const barraContenido = document.getElementById('barra-contenido');
             const detalles = document.getElementById('detalles-' + id);
-            barraContenido.innerHTML = detalles.innerHTML; // Cargar los detalles
-            barraLateral.style.width = '300px'; // Mostrar la barra lateral
+            barraContenido.innerHTML = detalles.innerHTML;
+            barraLateral.style.width = '300px';
         }
 
         function cerrarDetalles() {
             // Ocultar la barra lateral
             const barraLateral = document.getElementById('barra-lateral');
-            barraLateral.style.width = '0'; // Ocultar la barra lateral
+            barraLateral.style.width = '0';
         }
 
         function cambiarModo() {

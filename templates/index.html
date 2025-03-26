@@ -76,12 +76,15 @@
                     <div class="dot"></div>
                 </div>
                 <div class="descargar-archivo">
-                    <h3>Descargar CSV | Mostrar empleados</h3>
+                    <h4>Descargar CSV | Mostrar empleados | Visualizar graficos</h4>
                     <span class="material-symbols-outlined upload-button" onclick="generarYDescargarCSV()">download</span>
 
                     <a href="{{ url_for('resultados') }}">
                         <span class="material-symbols-outlined upload-button" onclick="generarCSV()">pageview</span>
                     </a>
+                    <a href="/graficos">
+                        <span class="material-symbols-outlined upload-button">analytics</span>
+                    </a>        
                 </div>
             </div>
         </div>

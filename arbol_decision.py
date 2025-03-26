@@ -16,7 +16,7 @@ import os
 def leer_y_generar_riesgo(datos_csv):
     df = pd.read_csv(datos_csv)
 
-    # Normalizar las variables y calcular riesgo
+    # calculamos una probabilidad para calcular el riesgo
     prob_riesgo = (
         0.3 * (df["Horas_Trabajadas"] / df["Horas_Trabajadas"].max()) + 
         0.4 * (df["Ausencias"] / df["Ausencias"].max()) +
@@ -24,7 +24,9 @@ def leer_y_generar_riesgo(datos_csv):
         0.1 * (df["Salario"] / df["Salario"].max())
     )
 
-    df["Riesgo"] = np.where(prob_riesgo > 0.5, 1, 0)
+    # si la probabilidad calculada antes es mayor a 0.5, es "alto riesgo"
+
+    df["Riesgo"] = np.where(prob_riesgo > 0.52, 1, 0)
 
     df_datos = df[["ID", "Horas_Trabajadas", "Ausencias", "Edad", "Salario"]].copy()
     df_riesgos = df[["ID", "Nombre", "Riesgo"]].copy()
@@ -32,14 +34,9 @@ def leer_y_generar_riesgo(datos_csv):
     return df_datos, df_riesgos, df
 
 def main_a(ruta_archivo):
-    #ruta_script = os.path.dirname(os.path.abspath(__file__))
-    #ruta_archivo = os.path.join(ruta_script, "datos", "empleados.csv")
-    #datos_csv = os.path.abspath(ruta_archivo)
 
     df_datos, df_riesgos, df = leer_y_generar_riesgo(ruta_archivo)
 
-    #print(df_datos)
-    #print(df_riesgos)
     encoder = OneHotEncoder()
     genero_encoded = encoder.fit_transform(df[["Genero"]])  # Suponiendo que la columna se llama "Genero"
 
@@ -69,14 +66,6 @@ def main_a(ruta_archivo):
     arbol.fit(x_train, y_train)
 
     x_full = scaler.transform(x)
-
-    #y_pred_arbol = arbol.predict(x_test)
-    # print('Reales:     ', y_test.values.tolist())
-    # print('Prediccion: ', y_pred_arbol.tolist())
-    # print('Precision: ', precision_score(y_test, y_pred_arbol))
-    # print('Memoria: ', recall_score(y_test, y_pred_arbol))
-    # print('F1_score: ', f1_score(y_test, y_pred_arbol))
-    # print(classification_report(y_test, y_pred_arbol))
 
     return arbol, x_train, x_test, y_test, x_full, df_original
 
