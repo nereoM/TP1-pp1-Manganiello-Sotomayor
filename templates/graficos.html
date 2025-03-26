@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Análisis de Riesgo - Matriz de Confusión</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
     <header>
@@ -16,12 +17,14 @@
             <h2>Matriz de Confusión</h2>
             <p>Visualización del desempeño del modelo de clasificación:</p>
 
-            <img src="{{ url_for('imagenes_files', filename='matriz_riesgos.png') }}" alt="Matriz">
+            <!-- Imagen de la matriz con ID 'matrixImage' para manipularla con JavaScript -->
+            <img id="matrixImage" class="matrix-img" src="{{ url_for('imagenes_files', filename='matriz_riesgos.png') }}" alt="Matriz">
             
+            <!-- Controles de zoom con más separación -->
             <div class="zoom-controls">
-                <button onclick="zoomIn()">+ Zoom</button>
-                <button onclick="zoomOut()">- Zoom</button>
-                <button onclick="resetZoom()">Reset</button>
+                <button onclick="zoomIn()" class="zoom-btn">+ Zoom</button>
+                <button onclick="zoomOut()" class="zoom-btn">- Zoom</button>
+                <button onclick="resetZoom()" class="zoom-btn">Reset</button>
             </div>
             
             <a href="../resultados/matriz_riesgos.png" download="matriz_riesgos.png" class="download-btn">
@@ -31,28 +34,33 @@
     </div>
 
     <script>
-        // Funciones para el zoom de la imagen
         let currentScale = 1;
-        const matrixImage = document.getElementById('matrixImage');
-        
+        const matrixImage = document.getElementById('matrixImage'); 
+    
         function zoomIn() {
-            currentScale += 0.1;
+            currentScale += 0.2;
             matrixImage.style.transform = `scale(${currentScale})`;
         }
-        
+    
         function zoomOut() {
-            if (currentScale > 0.5) {
-                currentScale -= 0.1;
+            if (currentScale > 0.6) {
+                currentScale -= 0.2;
                 matrixImage.style.transform = `scale(${currentScale})`;
             }
         }
-        
+    
         function resetZoom() {
             currentScale = 1;
             matrixImage.style.transform = 'scale(1)';
         }
     </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const modoOscuro = localStorage.getItem("modo_oscuro") === "true";
+        document.body.classList.toggle("dark-mode", modoOscuro);
+    });
+</script>
+
 </body>
 </html>
-        
-

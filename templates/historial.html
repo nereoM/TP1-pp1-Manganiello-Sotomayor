@@ -5,17 +5,25 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Historial de Usuarios</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" />
 </head>
-<body>
+<body class="{{ 'dark-mode' if modo_oscuro == 'true' else '' }}">
     <div class="container">
         <h1>Historial de Usuarios</h1>
-
+        
+        <!-- Botón para cambiar de modo -->
+        <button id="modo-toggle" onclick="cambiarModo()">
+            <span class="material-symbols-outlined moon" id="icono-modo">nightlight_round</span>
+            <span class="material-symbols-outlined sun" id="icono-modo">wb_sunny</span>
+        </button>
+        
         {% if historial %}
             <table class="tabla-historial">
                 <thead>
                     <tr>
                         <th>Usuario</th>
                         <th>Fecha</th>
+                        <th>Archivo</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -23,6 +31,7 @@
                         <tr>
                             <td>{{ entrada['usuario'] }}</td>
                             <td>{{ entrada['fecha'] }}</td>
+                            <td>{{ entrada['archivo'] }}</td>
                         </tr>
                     {% endfor %}
                 </tbody>
@@ -30,8 +39,16 @@
         {% else %}
             <p>No hay registros en el historial.</p>
         {% endif %}
-
+        
         <a href="/" class="boton-volver">Volver al inicio</a>
     </div>
+    
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const modoOscuro = localStorage.getItem("modo_oscuro") === "true";
+            document.body.classList.toggle("dark-mode", modoOscuro);
+        });
+    </script>
+    
 </body>
 </html>

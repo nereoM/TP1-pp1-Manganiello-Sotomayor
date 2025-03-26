@@ -262,35 +262,11 @@
         }
     </script>
     <script>
-        function cambiarModo() {
-            const modoOscuro = document.body.classList.contains("dark-mode");
-            const nuevoModo = modoOscuro ? 'false' : 'true';
-
-            fetch('/cambiar_modo', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ 'modo_oscuro': nuevoModo })
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.body.classList.toggle("dark-mode", !modoOscuro);
-
-                const sol = document.querySelector(".sun");
-                const luna = document.querySelector(".moon");
-                if (!modoOscuro) {
-                    sol.style.display = "none";
-                    luna.style.display = "block";
-                } else {
-                    sol.style.display = "block";
-                    luna.style.display = "none";
-                }
-            })
-            .catch(error => {
-                console.error('Error:', error);
-            });
-        }
+        document.addEventListener("DOMContentLoaded", function() {
+            const modoOscuro = localStorage.getItem("modo_oscuro") === "true";
+            document.body.classList.toggle("dark-mode", modoOscuro);
+        });
     </script>
+    
 </body>
 </html>
