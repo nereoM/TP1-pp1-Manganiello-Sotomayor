@@ -52,22 +52,18 @@
         function cambiarModo() {
             const body = document.body;
             const modoOscuro = body.classList.contains("dark-mode");
-    
-            // Alternar modo
+
             body.classList.toggle("dark-mode", !modoOscuro);
-            localStorage.setItem("modo_oscuro", !modoOscuro);  // Guardar en localStorage
-    
-            // Cambiar iconos de sol y luna
+            localStorage.setItem("modo_oscuro", !modoOscuro);
+
             document.querySelector(".sun").style.display = modoOscuro ? "block" : "none";
             document.querySelector(".moon").style.display = modoOscuro ? "none" : "block";
         }
-    
-        // Aplicar el modo oscuro si está guardado en localStorage
+
         document.addEventListener("DOMContentLoaded", function() {
             const modoOscuro = localStorage.getItem("modo_oscuro") === "true";
             document.body.classList.toggle("dark-mode", modoOscuro);
-    
-            // Configurar icono correcto
+
             document.querySelector(".sun").style.display = modoOscuro ? "none" : "block";
             document.querySelector(".moon").style.display = modoOscuro ? "block" : "none";
         });

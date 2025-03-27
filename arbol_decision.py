@@ -26,7 +26,7 @@ def leer_y_generar_riesgo(datos_csv):
 
     # si la probabilidad calculada antes es mayor a 0.5, es "alto riesgo"
 
-    df["Riesgo"] = np.where(prob_riesgo > 0.52, 1, 0)
+    df["Riesgo"] = np.where(prob_riesgo > 0.48, 1, 0)
 
     df_datos = df[["ID", "Horas_Trabajadas", "Ausencias", "Edad", "Salario"]].copy()
     df_riesgos = df[["ID", "Nombre", "Riesgo"]].copy()

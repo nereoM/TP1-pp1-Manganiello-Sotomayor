@@ -14,7 +14,7 @@ from datetime import datetime
 import json
 import csv
 import hashlib
-from generar_graficos import guardar_matriz_confusion
+from generar_graficos import guardar_matriz_confusion, guardar_curva_roc
 
 app = Flask(__name__)
 
@@ -272,6 +272,8 @@ def predecir_modelo_arbol():
     guardar_matriz_confusion(prediccion, x_test_a, y_test_a, 
                          clases=['Bajo Riesgo', 'Alto Riesgo'],
                          nombre_archivo='matriz_riesgos.png')
+    
+    guardar_curva_roc(prediccion, y_test_a, nombre_archivo='curva_roc.png')
 
     return jsonify({
         "precision": precision,
@@ -339,9 +341,11 @@ def predecir_modelo_regresion():
     memoria = recall_score(y_test_r, prediccion, average='binary')
     f1 = f1_score(y_test_r, prediccion, average='binary')
     
-    guardar_matriz_confusion(prediccion, x_test_a, y_test_a, 
+    guardar_matriz_confusion(prediccion, x_test_r, y_test_r, 
                          clases=['Bajo Riesgo', 'Alto Riesgo'],
                          nombre_archivo='matriz_riesgos.png')
+    
+    guardar_curva_roc(prediccion, y_test_r, nombre_archivo='curva_roc.png')
 
     return jsonify({
         "precision": precision,
