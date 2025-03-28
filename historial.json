@@ -367,5 +367,34 @@
         "usuario": "nereo",
         "fecha": "2025-03-28 02:36:17",
         "archivo": "empleados.csv"
+    },
+    {
+        "usuario": "Pepe",
+        "fecha": "2025-03-28 11:47:35"
+    },
+    {
+        "usuario": "Pepe",
+        "fecha": "2025-03-28 11:47:50"
+    },
+    {
+        "usuario": "Pepe",
+        "fecha": "2025-03-28 11:48:18"
+    },
+    {
+        "usuario": "Pepe",
+        "fecha": "2025-03-28 11:48:25",
+        "archivo": "empleados.csv"
+    },
+    {
+        "usuario": "a",
+        "fecha": "2025-03-28 12:33:46"
+    },
+    {
+        "usuario": "a",
+        "fecha": "2025-03-28 12:41:53"
+    },
+    {
+        "usuario": "a",
+        "fecha": "2025-03-28 12:52:32"
     }
 ]

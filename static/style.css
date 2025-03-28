@@ -13,6 +13,8 @@
     z-index: 1000;
 }
 
+
+
 .menu-boton {
     background: none;
     border: none;
@@ -35,6 +37,8 @@
     left: 0;
     width: 200px;
 }
+
+
 
 .menu-opciones.active {
     display: block;
@@ -60,7 +64,12 @@
 }
 
 .material-symbols-outlined {
-    color: white;
+    color: rgb(255, 255, 255);
+}
+
+body:not(.dark-mode) .material-symbols-outlined {
+
+    color: rgb(0, 0, 0);
 }
 
 body {
@@ -112,11 +121,8 @@ body {
     justify-content: center;
 }
 
-/*
-.subir-archivo input {
-    display: none;
-}
-*/
+
+
 .upload-button {
     cursor: pointer;
     font-size: 30px;
@@ -184,6 +190,15 @@ body:not(.dark-mode) .material-symbols-outlined.upload-button:hover {
     display: none;
     justify-content: center;
     margin-top: 20px;
+}
+
+body:not(.dark-mode) .indicator-carga .dot {
+    background-color: black; 
+}
+
+
+body.dark-mode .indicator-carga .dot {
+    background-color: white; 
 }
 
 .indicator-carga .dot {
@@ -572,6 +587,49 @@ body.dark-mode #modo-toggle {
     max-height: 0;
     overflow: hidden;
 }
+
+.contenido-busqueda {
+    display: flex;
+    justify-content: center; 
+    align-items: center;
+    margin: 20px auto; 
+    width: 100%; 
+}
+
+.boton-busqueda {
+    background-color: #1d1c47;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 50%;
+    transition: transform 0.3s ease;
+}
+
+.boton-busqueda:hover {
+    transform: scale(1.1);
+}
+
+#campo-busqueda {
+    width: 0;
+    opacity: 0;
+    padding: 10px;
+    border: 2px solid white;
+    border-radius: 5px;
+    background-color: #45455c;
+    color: white;
+    font-size: 16px;
+    transition: width 0.4s ease, opacity 0.4s ease;
+}
+
+#campo-busqueda.activo {
+    width: 200px;
+    opacity: 1;
+    margin-left: 10px; 
+}
+
+
 
 .barra-lateral {
     height: 100%;

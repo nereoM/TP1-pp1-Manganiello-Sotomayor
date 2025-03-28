@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -7,28 +7,16 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" />
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            background: linear-gradient(#45455c, #1d1c47);
-            min-height: 100vh;
-            transition: background 0.5s ease;
-        }
-        .popup {
-            width: 420px;
-            height: auto;
-            background: linear-gradient(#1d1c47, #45455c);
-            overflow: hidden;
-            border-radius: 15px;
-            box-shadow: 0 0 128px rgba(0, 0, 0, 0.1), 0 32px 64px -48px rgba(0, 0, 0, 0.5);
-            margin: 20px auto;
-            padding: 20px;
-            transition: background 0.5s ease, box-shadow 0.5s ease;
-        }
-    </style>
+
 </head>
 
     <div class="titulo-resultado">
         <h1>Empleados clasificados como de "Alto riesgo".</h1>
+    </div>
+
+    <div class="contenido-busqueda">
+        <button class="boton-busqueda" onclick="activarBusqueda()">🔍</button>
+        <input type="text" id="campo-busqueda" placeholder="Buscar por ID..." onkeyup="filtrarEmpleados()" />
     </div>
 
     {% if empleados_riesgo %}
@@ -77,6 +65,31 @@
         }
 
     </script>
+
+<script>
+    function activarBusqueda() {
+        const campoBusqueda = document.getElementById("campo-busqueda");
+        campoBusqueda.classList.toggle("activo");
+        campoBusqueda.focus();  
+    }
+
+    function filtrarEmpleados() {
+        const entrada = document.getElementById("campo-busqueda").value.toLowerCase();
+        const empleados = document.querySelectorAll(".empleado");
+
+        empleados.forEach(empleado => {
+            const idEmpleado = empleado.querySelector("h3").textContent.toLowerCase();
+            if (idEmpleado.includes(entrada)) {
+                empleado.style.display = "block";
+            } else {
+                empleado.style.display = "none";
+            }
+        });
+    }
+</script>
+
+
+
    <script>
     document.addEventListener("DOMContentLoaded", function() {
         const modoOscuro = localStorage.getItem("modo_oscuro") === "true";
