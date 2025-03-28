@@ -15,6 +15,11 @@ import json
 import csv
 import hashlib
 from generar_graficos import guardar_matriz_confusion, guardar_curva_roc
+from verificar_columnas import verificar_columnas
+import os
+import time
+from werkzeug.utils import secure_filename
+import shutil
 
 app = Flask(__name__)
 
@@ -181,7 +186,7 @@ def predecir_individual():
     return render_template('predecir_individual.html', resultado=resultado)
 
 
-# 
+# funcion encargada de verificar que existe el archivo y contiene las columnas requeridas
 
 @app.route('/subir_archivo', methods=['POST'])
 def subir_archivo():
@@ -192,25 +197,36 @@ def subir_archivo():
 
     if file.filename == '':
         return jsonify({"error": "El archivo no tiene nombre"}), 400
-
+    
     filename = secure_filename(file.filename)
-    filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    temp_filepath = os.path.join(app.config['UPLOAD_FOLDER'], f"temp_{filename}")
+    final_filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
 
     try:
-        file.save(filepath)
-        print(f"File saved at: {filepath}")
+        file.save(temp_filepath)
+
+        if not verificar_columnas(temp_filepath):
+            os.remove(temp_filepath)
+            return jsonify({"error": "El archivo no tiene las columnas requeridas"}), 400
+
+        if os.path.exists(final_filepath):
+            os.remove(final_filepath)
+        os.rename(temp_filepath, final_filepath)
+
+        usuario = session.get('usuario', None)
+        if usuario:
+            try:
+                agregar_entrada(usuario, filename)
+            except Exception as e:
+                return jsonify({"error": f"Error en historial: {str(e)}"}), 500
+
+        return jsonify({"mensaje": "Archivo subido correctamente", "filepath": final_filepath})
+
     except Exception as e:
-        return jsonify({"error": f"No se pudo guardar el archivo: {str(e)}"}), 500
 
-    usuario = session.get('usuario', None)
-    if usuario:
-        try:
-            agregar_entrada(usuario, filename)
-            print(f"Entrada agregada al historial: {usuario} subió el archivo {filename}")
-        except Exception as e:
-            return jsonify({"error": f"No se pudo agregar al historial: {str(e)}"}), 500
-
-    return jsonify({"mensaje": "Archivo subido correctamente", "filepath": filepath})
+        if os.path.exists(temp_filepath):
+            os.remove(temp_filepath)
+        return jsonify({"error": f"Error al procesar archivo: {str(e)}"}), 500
 
 
 # funcion para entrenar el modelo utilizando arboles de decision
@@ -227,7 +243,7 @@ def entrenar_modelo_arbol():
 
         if not os.path.exists(filepath):
             return jsonify({"error": "El archivo no existe"}), 400
-
+        print("antes de llamar a main_a")
         # llamamos a la funcion main de arbol_decision, donde se encuentra la logica principal del entrenamiento del modelo
         modelo_a, x_train_a, x_test_a, y_test_a, x_full_a, df_datos = main_a(filepath)
 

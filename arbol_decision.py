@@ -2,15 +2,8 @@ import pandas as pd
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import StandardScaler
-from sklearn.linear_model import LogisticRegression
 from sklearn.tree import DecisionTreeClassifier
 import numpy as np
-import csv
-import matplotlib.pyplot as plt
-from sklearn.tree import plot_tree
-from sklearn.metrics import confusion_matrix
-import seaborn as sns
-import os
 
 
 def leer_y_generar_riesgo(datos_csv):
@@ -18,15 +11,15 @@ def leer_y_generar_riesgo(datos_csv):
 
     # calculamos una probabilidad para calcular el riesgo
     prob_riesgo = (
-        0.3 * (df["Horas_Trabajadas"] / df["Horas_Trabajadas"].max()) + 
+        0.4 * (df["Horas_Trabajadas"] / df["Horas_Trabajadas"].max()) + 
         0.4 * (df["Ausencias"] / df["Ausencias"].max()) +
-        0.2 * (df["Edad"] / df["Edad"].max()) +
+        0.1 * (df["Edad"] / df["Edad"].max()) +
         0.1 * (df["Salario"] / df["Salario"].max())
     )
 
-    # si la probabilidad calculada antes es mayor a 0.5, es "alto riesgo"
+    # si la probabilidad calculada antes es mayor a 0.6, es "alto riesgo"
 
-    df["Riesgo"] = np.where(prob_riesgo > 0.48, 1, 0)
+    df["Riesgo"] = np.where(prob_riesgo > 0.6, 1, 0)
 
     df_datos = df[["ID", "Horas_Trabajadas", "Ausencias", "Edad", "Salario"]].copy()
     df_riesgos = df[["ID", "Nombre", "Riesgo"]].copy()
@@ -36,9 +29,9 @@ def leer_y_generar_riesgo(datos_csv):
 def main_a(ruta_archivo):
 
     df_datos, df_riesgos, df = leer_y_generar_riesgo(ruta_archivo)
-
+    print("despues de leer y generar riesgo")
     encoder = OneHotEncoder()
-    genero_encoded = encoder.fit_transform(df[["Genero"]])  # Suponiendo que la columna se llama "Genero"
+    genero_encoded = encoder.fit_transform(df[["Genero"]])
 
     encoded_df = pd.DataFrame(genero_encoded.toarray(), columns=encoder.get_feature_names_out())
 
@@ -68,11 +61,3 @@ def main_a(ruta_archivo):
     x_full = scaler.transform(x)
 
     return arbol, x_train, x_test, y_test, x_full, df_original
-
-"""
-cm = confusion_matrix(y_test, y_pred_arbol)
-sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', xticklabels=["Bajo Riesgo", "Alto Riesgo"], yticklabels=["Bajo Riesgo", "Alto Riesgo"])
-plt.xlabel("Predicción")
-plt.ylabel("Real")
-plt.show()"
-"""
