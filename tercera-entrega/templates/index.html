@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Modelo de Machine Learning</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" />
+    <link rel="stylesheet" href="static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+</head>
+
+<body class="{{ 'dark-mode' if modo_oscuro == 'true' else '' }}">
+
+    <div class="menu-desplegable">
+        <button class="menu-boton" onclick="toggleMenu()">
+            <span class="material-symbols-outlined">menu</span>
+        </button>
+        <ul class="menu-opciones">
+            <li><a href="/index">Modelo: Árbol de decisión</a></li>
+            <li><a href="/regresion">Modelo: Regresión logística</a></li>
+        </ul>
+    </div>
+
+    <div id="informacion">
+    
+    </div>
+   ` `
+    <img src="https://www.ungs.edu.ar/wp-content/uploads/2024/06/logo_ungs_512.png" alt="logo ungs">
+
+    <div class="popup">
+        <div class="header">
+            <div class="titulo">
+                <h1>Predicción de Riesgo de Salud Ocupacional</h1>
+                <div class="modelo">
+                    <h2>Modelo de Arboles de decisión</h2>
+                    <span class="icono-info" data-tooltip="Este modelo predice el riesgo de problemas de salud ocupacional basándose en las horas trabajadas, ausencias, salario y género.">
+                        <i class="material-icons">help_outline</i>
+                    </span>
+                </div>
+            </div>
+            <div class="botones">
+                <h3>Generar CSV</h3>
+                <label for="numeroEmpleados">Número de empleados (mínimo 50):</label>
+                <input type="number" id="numeroEmpleados" min="50" value="50">
+                <span class="material-symbols-outlined upload-button" onclick="generarCSVEmpleados()">note_add</span>
+                <div id="loader" style="display: none; margin: 10px 0;">
+                    <p>Generando archivo CSV...</p>
+                </div>
+                <div id="resultado" style="margin: 10px 0;"></div>
+                
+                <div class="carga-archivo">
+                    <h3>Cargar archivo CSV</h3>
+                    <form id="upload-form" method="post" enctype="multipart/form-data">
+                        <label for="archivo">
+                            <span class="material-symbols-outlined upload-button" onclick="seleccionarArchivo()">upload_file</span>
+                        </label>
+                        <input id="archivo" type="file" name="file" accept=".csv" required style="display: none;">
+                    </form>
+                </div>
+                <h3>Entrenar: </h3>
+                <span class="material-symbols-outlined play-button" onclick="entrenarModelo()">play_arrow</span>
+                <p id="mensaje-entrenamiento"></p>
+                <div class="indicator-carga">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+                <h3>Predecir: </h3>
+                <span class="material-symbols-outlined play-button" onclick="predecirModelo()">play_arrow</span>
+                <p id="resultado-prediccion"></p>
+                <div class="indicator-carga">
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                    <div class="dot"></div>
+                </div>
+                <div class="descargar-archivo">
+                    <h4>Descargar CSV | Mostrar empleados</h4>
+                    <span class="material-symbols-outlined upload-button" onclick="generarYDescargarCSV()">download</span>
+
+                    <a href="{{ url_for('resultados') }}">
+                        <span class="material-symbols-outlined upload-button" 
+                              onclick="generarCSV(event, true)">pageview</span>
+                    </a>      
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function toggleMenu() {
+            const menu = document.querySelector('.menu-opciones');
+            menu.classList.toggle('active');
+        }
+
+        function presionarBoton() {
+            const play = document.querySelectorAll('.play-button');
+            const indicadoresCarga = document.querySelectorAll('.indicator-carga');
+
+            play.forEach((button, index) => {
+                button.addEventListener('click', function () {
+                    indicadoresCarga[index].style.display = 'flex';
+                });
+            });
+        }
+        presionarBoton();
+    </script>
+    <script>
+        let filepath = null;
+
+        function seleccionarArchivo() {
+            const inputArchivo = document.getElementById("archivo");
+
+            inputArchivo.removeEventListener("change", handleFileSelect);
+
+            inputArchivo.addEventListener("change", handleFileSelect, { once: true });
+
+            inputArchivo.click();
+        }
+
+        function handleFileSelect(event) {
+            if (event.target.files.length > 0) {
+                subirArchivo();
+            }
+        }
+
+        function subirArchivo() {
+            const inputArchivo = document.getElementById("archivo");
+
+            if (inputArchivo.files.length === 0) return;
+
+            const form = document.getElementById("upload-form");
+            const formData = new FormData(form);
+
+            fetch('/subir_archivo', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert(data.mensaje);
+                    filepath = data.filepath;
+                    console.log("Archivo subido, ruta:", filepath);
+                }
+            })
+            .catch(error => {
+                console.error('Error en la subida:', error);
+                alert('Error al subir el archivo.');
+            });
+
+            inputArchivo.value = "";
+    }
+
+        function entrenarModelo() {
+            if (!filepath) {
+                alert("Primero sube un archivo.");
+                return;
+            }
+
+            fetch('/entrenar_arbol', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ filepath: filepath })
+            })
+            .then(response => response.json())
+            .then(data => {
+                setTimeout(() => {
+                    document.getElementById("mensaje-entrenamiento").innerText = data.mensaje || data.error;
+
+                    document.querySelectorAll('.indicator-carga').forEach(indicator => {
+                        indicator.style.display = 'none';
+                    });
+                }, 3000);
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById("mensaje-entrenamiento").innerText = "Hubo un problema con el entrenamiento.";
+            });
+
+            document.querySelectorAll('.indicator-carga').forEach(indicator => {
+                indicator.style.display = 'none';
+            });
+        }
+
+        function predecirModelo() {
+            fetch('/predecir_arbol', { method: 'POST' })
+                .then(response => response.json())
+                .then(data => {
+                    setTimeout(() => {
+                        if (data.error) {
+                            document.getElementById("resultado-prediccion").innerText = data.error;
+                        } else {
+                            let precisionTexto = "Precisión: " + data.precision;
+                            let memoriaTexto = "Memoria: " + data.memoria;
+                            let f1Texto = "F1 Score: " + data.f1;
+
+                            document.getElementById("resultado-prediccion").innerHTML =
+                                `${precisionTexto}<br>${memoriaTexto}<br>${f1Texto}`;
+                        }
+
+                        document.querySelectorAll('.indicator-carga').forEach(indicator => {
+                            indicator.style.display = 'none';
+                        });
+                    }, 3000);
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById("resultado-prediccion").innerText = "Hubo un problema con la predicción.";
+                });
+
+            document.querySelectorAll('.indicator-carga').forEach(indicator => {
+                indicator.style.display = 'none';
+            });
+        }
+
+        function generarCSV(event = null, redirect = false) {
+            if (event) event.preventDefault();
+
+            return fetch('/generar_csv', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ filepath: 'ruta/del/archivo.csv' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) throw new Error(data.error);
+
+                if (redirect) {
+                    window.location.href = "{{ url_for('resultados') }}";
+                }
+                return data;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("Error al generar el CSV: " + error.message);
+                throw error;
+            });
+        }
+
+        function descargarCSV() {
+            window.location.href = "/descargar_csv";
+        }
+
+        function generarYDescargarCSV() {
+            fetch('/generar_csv', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ filepath: 'ruta/del/archivo.csv' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) {
+                    alert(data.error);
+                } else {
+                    alert("CSV generado correctamente. Descargando...");
+                    window.location.href = "/descargar_csv";
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        async function generarCSVEmpleados() {
+            const input = document.getElementById('numeroEmpleados');
+            const n = parseInt(input.value);
+            const resultadoDiv = document.getElementById('resultado');
+            
+            if (isNaN(n) || n < 50) {
+                resultadoDiv.innerHTML = '<p class="error">El número debe ser ≥ 50</p>';
+                input.focus();
+                return;
+            }
+
+            const loader = document.getElementById('loader');
+            if (loader) loader.style.display = 'block';
+
+            try {
+                const response = await fetch('/generar_csv_pruebas', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ n: n }),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error en el servidor');
+                }
+
+                resultadoDiv.innerHTML = `<p class="success">${data.mensaje}</p>`;
+                console.log('CSV generado:', data);
+
+            } catch (error) {
+                console.error('Error:', error);
+                resultadoDiv.innerHTML = `<p class="error">${error.message}</p>`;
+            } finally {
+                if (loader) loader.style.display = 'none';
+            }
+        }
+    </script>
+   <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const modoOscuro = localStorage.getItem("modo_oscuro") === "true";
+        document.body.classList.toggle("dark-mode", modoOscuro);
+    });
+</script>
+
+</body>
+</html>

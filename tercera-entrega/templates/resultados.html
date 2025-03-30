@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Empleados con Riesgo</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" />
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+</head>
+
+    <div class="titulo-resultado">
+        <h1>Empleados clasificados como de "Alto riesgo".</h1>
+    </div>
+
+    <div class="contenido-busqueda">
+        <button class="boton-busqueda" onclick="activarBusqueda()">🔍</button>
+        <input type="text" id="campo-busqueda" placeholder="Buscar por ID..." onkeyup="filtrarEmpleados()" />
+    </div>
+
+    {% if empleados_riesgo %}
+        <div class="empleados-container">
+            {% for empleado in empleados_riesgo %}
+                <div class="empleado popup">
+                    <img src="https://p7.hiclipart.com/preview/81/570/423/computer-icons-user-clip-art-user-thumbnail.jpg" alt="Avatar de {{ empleado.id }}" class="avatar">
+
+                    <div class="empleado-info">
+                        <h3>ID: {{ empleado.id }}</h3>
+                        <button class="ver-detalles-btn" onclick="mostrarDetalles('{{ empleado.id }}')">Ver Detalles</button>
+
+                        <div id="detalles-{{ empleado.id }}" class="detalles" style="display:none;">
+                            <p><strong>Horas Trabajadas:</strong> {{ empleado.horas_trabajadas }}</p>
+                            <p><strong>Ausencias:</strong> {{ empleado.ausencias }}</p>
+                            <p><strong>Edad:</strong> {{ empleado.edad }}</p>
+                            <p><strong>Salario:</strong> {{ empleado.salario }}</p>
+                            <p><strong>Riesgo:</strong> {{ empleado.riesgo }}</p>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p>No se encontraron empleados con riesgo.</p>
+    {% endif %}
+
+    <!-- Barra lateral (inicialmente oculta) -->
+    <div id="barra-lateral" class="barra-lateral">
+        <button class="cerrar" onclick="cerrarDetalles()">Cerrar</button>
+        <div id="barra-contenido"></div>
+    </div>
+
+    <script>
+        function mostrarDetalles(id) {
+            const barraLateral = document.getElementById('barra-lateral');
+            const barraContenido = document.getElementById('barra-contenido');
+            const detalles = document.getElementById('detalles-' + id);
+            barraContenido.innerHTML = detalles.innerHTML;
+            barraLateral.style.width = '300px';
+        }
+
+        function cerrarDetalles() {
+            const barraLateral = document.getElementById('barra-lateral');
+            barraLateral.style.width = '0';
+        }
+
+    </script>
+
+<script>
+    function activarBusqueda() {
+        const campoBusqueda = document.getElementById("campo-busqueda");
+        campoBusqueda.classList.toggle("activo");
+        campoBusqueda.focus();  
+    }
+
+    function filtrarEmpleados() {
+        const entrada = document.getElementById("campo-busqueda").value.toLowerCase();
+        const empleados = document.querySelectorAll(".empleado");
+
+        empleados.forEach(empleado => {
+            const idEmpleado = empleado.querySelector("h3").textContent.toLowerCase();
+            if (idEmpleado.includes(entrada)) {
+                empleado.style.display = "block";
+            } else {
+                empleado.style.display = "none";
+            }
+        });
+    }
+</script>
+
+
+
+   <script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const modoOscuro = localStorage.getItem("modo_oscuro") === "true";
+        document.body.classList.toggle("dark-mode", modoOscuro);
+    });
+</script>
+
+
+</body>
+</html>
