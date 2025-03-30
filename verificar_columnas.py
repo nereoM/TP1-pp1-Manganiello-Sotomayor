@@ -1,18 +1,12 @@
 import pandas as pd
 
-
-def verificar_columnas(ruta_archivo):
+# verifica que el archivo CSV tenga todas las columnas requeridas
+def verificar_columnas(file_obj):
     try:
-        with open(ruta_archivo, 'r') as f:
-            df = pd.read_csv(ruta_archivo)
-            columnas_requeridas = ["ID", "Nombre", "Edad", "Salario", "Horas_Trabajadas", "Ausencias", "Genero"]
-            columnas_faltantes = [col for col in columnas_requeridas if col not in df.columns]
-            if columnas_faltantes:
-                print(f"Faltan las siguientes columnas: {', '.join(columnas_faltantes)}")
-                return False
-            else:
-                print("Todas las columnas requeridas están presentes.")
-                return True
-    except FileNotFoundError:
-        print(f"El archivo {ruta_archivo} no se encuentra.")
+        file_obj.seek(0)
+        df = pd.read_csv(file_obj, nrows=1)
+        required = ["ID", "Nombre", "Edad", "Salario", "Horas_Trabajadas", "Ausencias", "Genero"]
+        return all(col in df.columns for col in required)
+    except Exception as e:
+        print(f"Error en verificación: {e}")
         return False

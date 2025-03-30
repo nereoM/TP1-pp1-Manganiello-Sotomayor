@@ -1,25 +1,29 @@
-from flask import Flask, render_template, request, redirect, url_for, jsonify, send_file, session, send_from_directory
+from flask import Flask, render_template, request, jsonify, send_file, session
 import pickle
 import numpy as np
-from sklearn.linear_model import LogisticRegression
-from sklearn.preprocessing import StandardScaler
 from arbol_decision import main_a
 from regresion_logistica import main_r
-from sklearn.metrics import precision_score, recall_score, f1_score, classification_report
+from sklearn.metrics import precision_score, recall_score, f1_score
 import os
 import pandas as pd
 from transformar_riesgos import transformar_riesgos
 from werkzeug.utils import secure_filename
-from datetime import datetime
 import json
 import csv
 import hashlib
-from generar_graficos import guardar_matriz_confusion, guardar_curva_roc
-from verificar_columnas import verificar_columnas
 import os
 import time
 from werkzeug.utils import secure_filename
 import shutil
+from generar_csv import generar_csv_empleados
+from verificar_columnas import verificar_columnas
+
+# necesario para el ejecutable
+try:
+    from sklearn.utils._weight_vector import WeightVector
+except ImportError:
+    pass
+
 
 app = Flask(__name__)
 
@@ -50,58 +54,11 @@ UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 
-# lee el historial de personas que subieron archivos
-def leer_historial():
-    try:
-        with open('historial.json', 'r') as archivo:
-            contenido = archivo.read().strip()
-            if not contenido:
-                return []
-            return json.loads(contenido)
-    except FileNotFoundError:
-        return []
-    except json.JSONDecodeError:
-        return []
-
-
-def guardar_historial(historial):
-    try:
-        with open('historial.json', 'w') as archivo:
-            json.dump(historial, archivo, indent=4)
-        print("Historial guardado correctamente")
-    except Exception as e:
-        print(f"Error al guardar el historial: {e}")
-
-
-def agregar_entrada(usuario, archivo=None):
-    historial = leer_historial()
-    nueva_entrada = {
-        "usuario": usuario,
-        "fecha": datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    }
-    
-    if archivo:
-        nueva_entrada["archivo"] = archivo
-    
-    historial.append(nueva_entrada)
-    guardar_historial(historial)
-
 # funciones utilizadas para rutas
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/')
 def home():
-    if request.method == 'POST':
-        session['usuario'] = request.form['nombre_usuario']
-        print(f"Usuario ingresado: {session['usuario']}")
-        agregar_entrada(session['usuario'])
-    usuario = session.get('usuario', None)
-    return render_template('inicio.html', usuario=usuario)
-
-
-@app.route('/logout')
-def logout():
-    session.pop('usuario', None)
-    return redirect(url_for('home'))
+    return render_template('index.html')
 
 
 @app.route('/index')
@@ -113,77 +70,6 @@ def index():
 @app.route("/regresion")
 def regresion():
     return render_template("index_regresion.html")
-
-@app.route("/graficos")
-def graficos():
-    return render_template("graficos.html")
-
-@app.route('/imagenes/<path:filename>')
-def imagenes_files(filename):
-    return send_from_directory(os.path.join(app.root_path, 'imagenes'), filename)
-
-@app.route('/historial', methods=['GET'])
-def mostrar_historial():
-    historial = leer_historial()
-    return render_template('historial.html', historial=historial)
-
-
-@app.route('/predecir_individual', methods=['GET', 'POST'])
-def predecir_individual():
-    global modelo_r, modelo_a, x_train, x_test, y_test, x_full, df_datos
-
-    if modelo_a is None:
-        FILEPATH = 'C:/Users/nazar/TP1-pp1/datos/empleados.csv'
-
-        if not os.path.exists(FILEPATH):
-            return jsonify({"error": f"El archivo {FILEPATH} no existe"}), 500
-        
-        try:
-            modelo_a, x_train, x_test, y_test, x_full, df_datos = main_a(FILEPATH)
-        except Exception as e:
-            return jsonify({"error": f"No se pudo entrenar el modelo: {str(e)}"}), 500
-
-    resultado = None  # Inicializamos el resultado fuera de la lógica del POST
-
-    if request.method == 'POST':
-        horas_trabajadas = request.form.get('horas_trabajadas')
-        ausencias = request.form.get('ausencias')
-        edad = request.form.get('edad')
-        salario = request.form.get('salario')
-        genero = request.form.get('genero')
-
-        if not all([horas_trabajadas, ausencias, edad, salario, genero]):
-            return jsonify({"error": "Datos incompletos"}), 400
-
-        try:
-            horas_trabajadas = float(horas_trabajadas)
-            ausencias = int(ausencias)
-            edad = int(edad)
-            salario = float(salario)
-        except ValueError:
-            return jsonify({"error": "Los datos deben ser numéricos"}), 400
-
-        if genero not in ["Femenino", "Masculino"]:
-            return jsonify({"error": "Género inválido"}), 400
-
-        genero_femenino = 1 if genero == "Femenino" else 0
-        genero_masculino = 1 if genero == "Masculino" else 0
-
-        df_individual = pd.DataFrame([[horas_trabajadas, ausencias, genero_femenino, genero_masculino]], 
-                                     columns=["Horas_Trabajadas", "Ausencias", "Genero_Femenino", "Genero_Masculino"])
-
-        if not hasattr(predecir_individual, "scaler"):
-            scaler = StandardScaler()
-            df_individual_normalizado = scaler.fit_transform(df_individual)
-            predecir_individual.scaler = scaler
-        else:
-            scaler = predecir_individual.scaler
-            df_individual_normalizado = scaler.transform(df_individual)
-
-        prediccion = modelo_a.predict(df_individual_normalizado)
-        resultado = "Alto" if prediccion[0] == 1 else "Bajo"
-
-    return render_template('predecir_individual.html', resultado=resultado)
 
 
 # funcion encargada de verificar que existe el archivo y contiene las columnas requeridas
@@ -199,35 +85,45 @@ def subir_archivo():
         return jsonify({"error": "El archivo no tiene nombre"}), 400
     
     filename = secure_filename(file.filename)
-    temp_filepath = os.path.join(app.config['UPLOAD_FOLDER'], f"temp_{filename}")
-    final_filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
 
     try:
-        file.save(temp_filepath)
 
-        if not verificar_columnas(temp_filepath):
-            os.remove(temp_filepath)
-            return jsonify({"error": "El archivo no tiene las columnas requeridas"}), 400
-
-        if os.path.exists(final_filepath):
-            os.remove(final_filepath)
-        os.rename(temp_filepath, final_filepath)
-
-        usuario = session.get('usuario', None)
-        if usuario:
+        from io import BytesIO
+        file_bytes = BytesIO(file.read())
+  
+        file_bytes.seek(0)
+        if not verificar_columnas(file_bytes):
+            return jsonify({"error": "Columnas requeridas faltantes"}), 400
+        
+        file_bytes.seek(0)
+        filename = secure_filename(file.filename)
+        ruta_final = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        
+        for intento in range(3):
             try:
-                agregar_entrada(usuario, filename)
-            except Exception as e:
-                return jsonify({"error": f"Error en historial: {str(e)}"}), 500
-
-        return jsonify({"mensaje": "Archivo subido correctamente", "filepath": final_filepath})
-
+                with open(ruta_final, 'wb') as f:
+                    f.write(file_bytes.getbuffer())
+                break
+            except PermissionError:
+                time.sleep(0.5)
+        else:
+            raise PermissionError("No se pudo guardar el archivo")
+        
+        return jsonify({"mensaje": "Archivo subido correctamente", "filepath": ruta_final})
+    
     except Exception as e:
-
-        if os.path.exists(temp_filepath):
-            os.remove(temp_filepath)
-        return jsonify({"error": f"Error al procesar archivo: {str(e)}"}), 500
-
+        return jsonify({"error": str(e)}), 500
+    
+@app.route('/generar_csv_pruebas', methods=['POST'])
+def generar_csv_pruebas():
+    try:
+        n = request.json.get('n', 50)
+        if n < 50:
+            return jsonify({"error": "El número de empleados debe ser mayor a 50"}), 400
+        generar_csv_empleados(n)
+        return jsonify({"mensaje": f"Archivo CSV de prueba generado en {output_dir}"})
+    except Exception as e:
+        return jsonify({"error": f"Error al generar el CSV de prueba: {str(e)}"}), 500
 
 # funcion para entrenar el modelo utilizando arboles de decision
 
@@ -240,6 +136,17 @@ def entrenar_modelo_arbol():
 
         if not filepath:
             return jsonify({"error": "No se recibió el filepath"}), 400
+        
+        # borra el archivo empleados_con_riesgo
+        archivo = os.path.join(output_dir, "empleados_con_riesgo.csv")
+        if os.path.exists(archivo):
+            if os.path.isfile(archivo):
+                os.remove(archivo)
+                print("Archivo borrado.")
+            else:
+                print("La ruta no es un archivo.")
+        else:
+            print("El archivo no existe.")
 
         if not os.path.exists(filepath):
             return jsonify({"error": "El archivo no existe"}), 400
@@ -284,12 +191,8 @@ def predecir_modelo_arbol():
     precision = precision_score(y_test_a, prediccion, average='binary')
     memoria = recall_score(y_test_a, prediccion, average='binary')
     f1 = f1_score(y_test_a, prediccion, average='binary')
-    
-    guardar_matriz_confusion(prediccion, x_test_a, y_test_a, 
-                         clases=['Bajo Riesgo', 'Alto Riesgo'],
-                         nombre_archivo='matriz_riesgos.png')
-    
-    guardar_curva_roc(prediccion, y_test_a, nombre_archivo='curva_roc.png')
+
+    reiniciar_variables()
 
     return jsonify({
         "precision": precision,
@@ -310,6 +213,17 @@ def entrenar_modelo_regresion():
 
         if not filepath:
             return jsonify({"error": "No se recibió el filepath"}), 400
+        
+        # borra el archivo empleados_con_riesgo
+        archivo = os.path.join(output_dir, "empleados_con_riesgo.csv")
+        if os.path.exists(archivo):
+            if os.path.isfile(archivo):
+                os.remove(archivo)
+                print("Archivo borrado.")
+            else:
+                print("La ruta no es un archivo.")
+        else:
+            print("El archivo no existe.")
 
         if not os.path.exists(filepath):
             return jsonify({"error": "El archivo no existe"}), 400
@@ -356,12 +270,8 @@ def predecir_modelo_regresion():
     precision = precision_score(y_test_r, prediccion, average='binary')
     memoria = recall_score(y_test_r, prediccion, average='binary')
     f1 = f1_score(y_test_r, prediccion, average='binary')
-    
-    guardar_matriz_confusion(prediccion, x_test_r, y_test_r, 
-                         clases=['Bajo Riesgo', 'Alto Riesgo'],
-                         nombre_archivo='matriz_riesgos.png')
-    
-    guardar_curva_roc(prediccion, y_test_r, nombre_archivo='curva_roc.png')
+
+    reiniciar_variables()
 
     return jsonify({
         "precision": precision,
@@ -371,28 +281,22 @@ def predecir_modelo_regresion():
     })
 
 
-# generamos el csv con las predicciones de riesgos
+# funcion para reiniciar las variables globales, para evitar que se acumulen datos de diferentes modelos
+def reiniciar_variables():
+    global modelo_a, modelo_r, x_train_a, x_test_a, y_test_a, x_full_a
+    global x_train_r, x_test_r, y_test_r, x_full_r
+    modelo_a = None
+    modelo_r = None
+    x_train_a = None
+    x_test_a = None
+    y_test_a = None
+    x_full_a = None
+    x_train_r = None
+    x_test_r = None
+    y_test_r = None 
+    x_full_r = None
 
-@app.route('/generar_csv', methods=['POST'])
-def generar_csv():
-
-    global df_unido
-    df_transformed = transformar_riesgos(df_unido)
-
-    ruta_csv = os.path.join(output_dir, "empleados_con_riesgo.csv")
-
-    if df_transformed.empty:
-        return jsonify({"error": "No hay datos para generar el CSV"}), 400
-
-    try:
-        df_transformed.to_csv(ruta_csv, index=False)
-        return jsonify({"mensaje": "CSV generado con predicciones", "csv_path": ruta_csv})
-    except Exception as e:
-        return jsonify({"error": f"Error al guardar el archivo: {str(e)}"}), 500
-
-# lee del csv generado todos los empleados que sean de alto riesgo
-# para luego guardarlos y enviarlos al front
-
+# muestra los resultados de los empleados con riesgo alto, utilizando el archivo generado por la funcion generar_csv
 @app.route('/resultados')
 def resultados():
     empleados_riesgo = []
@@ -426,8 +330,29 @@ def resultados():
     return render_template('resultados.html', empleados_riesgo=empleados_riesgo)
 
 
-# envia la ruta para descargar el csv con las predicciones
+# generamos el csv con las predicciones de riesgos
 
+@app.route('/generar_csv', methods=['POST'])
+def generar_csv():
+
+    global df_unido
+    print("Antes de transformar:", df_unido.head())
+    df_transformed = transformar_riesgos(df_unido)
+    print("Después de transformar:", df_transformed.head())
+
+    ruta_csv = os.path.join(output_dir, "empleados_con_riesgo.csv")
+
+    if df_transformed.empty:
+        return jsonify({"error": "No hay datos para generar el CSV"}), 400
+
+    try:
+        df_transformed.to_csv(ruta_csv, index=False)
+        return jsonify({"mensaje": "CSV generado con predicciones", "csv_path": ruta_csv})
+    except Exception as e:
+        return jsonify({"error": f"Error al guardar el archivo: {str(e)}"}), 500
+
+
+# envia la ruta para descargar el csv con las predicciones
 @app.route('/descargar_csv')
 def descargar_csv():
 
@@ -451,7 +376,7 @@ def cambiar_modo():
 if __name__ == '__main__':
     if not os.path.exists(UPLOAD_FOLDER):
         os.makedirs(UPLOAD_FOLDER)
-    #app.run(debug=True)
-    app.run(host='0.0.0.0', port=8080)
+    app.run(host='0.0.0.0', port=5000, debug=False)
+    #app.run(host='0.0.0.0', port=8080)
 
   
