@@ -23,9 +23,6 @@
         </ul>
     </div>
 
-    <div id="informacion">
-    
-    </div>
    ` `
     <img src="https://www.ungs.edu.ar/wp-content/uploads/2024/06/logo_ungs_512.png" alt="logo ungs">
 
@@ -35,12 +32,33 @@
                 <h1>Predicción de Riesgo de Salud Ocupacional</h1>
                 <div class="modelo">
                     <h2>Modelo de Arboles de decisión</h2>
-                    <span class="icono-info" data-tooltip="Este modelo predice el riesgo de problemas de salud ocupacional basándose en las horas trabajadas, ausencias, salario y género.">
-                        <i class="material-icons">help_outline</i>
-                    </span>
                 </div>
             </div>
             <div class="botones">
+    <!-- boton para abrir el ventana -->
+    <button class="info-button" onclick="abrirModal()">
+        <span class="material-symbols-outlined">info</span>
+    </button>
+
+    <div id="modal" class="modal" style="display: none;">
+        <div class="modal-content">
+            <span class="close" onclick="cerrarModal()">&times;</span>
+            <h2>Información</h2>
+            <p class="modal-description">
+                Esta página permite al usuario interactuar con un modelo de Machine Learning para predecir el riesgo de salud ocupacional de los empleados.
+            </p>
+            <h3>Funciones principales:</h3>
+            <ul class="modal-list">
+                <li><strong>1. Generar datos:</strong> Crea un archivo CSV con información de empleados (mínimo 50).</li>
+                <li><strong>2. Cargar archivo CSV:</strong> El usuario puede subir su propio archivo de datos.</li>
+                <li><strong>3. Entrenar modelo:</strong> Utiliza el archivo para entrenar un modelo de árbol de decisión.</li>
+                <li><strong>4. Predecir riesgo:</strong> El modelo realiza predicciones y muestra resultados como precisión y puntuación F1.</li>
+                <li><strong>5. Descargar resultados:</strong> Permite generar y descargar un archivo CSV con los resultados o empleados de alto riesgo.</li>
+            </ul>
+        </div>
+    </div>
+            
+                <!-- boton para generar CSV -->
                 <h3>Generar CSV</h3>
                 <label for="numeroEmpleados">Número de empleados (mínimo 50):</label>
                 <input type="number" id="numeroEmpleados" min="50" value="50">
@@ -49,7 +67,8 @@
                     <p>Generando archivo CSV...</p>
                 </div>
                 <div id="resultado" style="margin: 10px 0;"></div>
-                
+            
+                <!-- boton para cargar CSV -->
                 <div class="carga-archivo">
                     <h3>Cargar archivo CSV</h3>
                     <form id="upload-form" method="post" enctype="multipart/form-data">
@@ -59,6 +78,8 @@
                         <input id="archivo" type="file" name="file" accept=".csv" required style="display: none;">
                     </form>
                 </div>
+            
+                <!-- boton para entrenar el modelo -->
                 <h3>Entrenar: </h3>
                 <span class="material-symbols-outlined play-button" onclick="entrenarModelo()">play_arrow</span>
                 <p id="mensaje-entrenamiento"></p>
@@ -67,6 +88,8 @@
                     <div class="dot"></div>
                     <div class="dot"></div>
                 </div>
+            
+                <!-- boton para predecir -->
                 <h3>Predecir: </h3>
                 <span class="material-symbols-outlined play-button" onclick="predecirModelo()">play_arrow</span>
                 <p id="resultado-prediccion"></p>
@@ -75,41 +98,18 @@
                     <div class="dot"></div>
                     <div class="dot"></div>
                 </div>
+            
+                <!-- bton para descargar resultados -->
                 <div class="descargar-archivo">
                     <h4>Descargar CSV | Mostrar empleados</h4>
                     <span class="material-symbols-outlined upload-button" onclick="generarYDescargarCSV()">download</span>
             
                     <a href="{{ url_for('resultados') }}">
-                        <span class="material-symbols-outlined upload-button" 
-                              onclick="generarCSV(event, true)">pageview</span>
-                    </a>      
-                </div>
-            
-                
-                <h3>Ver Información</h3>
-                <span class="material-symbols-outlined upload-button" style="cursor: pointer;" onclick="abrirModal()">info</span>
-            
-                
-                <div id="modal" class="modal" style="display: none;">
-                    <div class="modal-content">
-                        <span class="close" onclick="cerrarModal()">&times;</span>
-                        <h2>Información</h2>
-                        <p class="modal-description">
-                            Esta página permite al usuario interactuar con un modelo de Machine Learning para predecir el riesgo de salud ocupacional de los empleados.
-                        </p>
-                        
-                        <h3>Funciones principales:</h3>
-                        <ul class="modal-list">
-                            <li><strong>1. Generar datos:</strong> Crea un archivo CSV con información de empleados (mínimo 50).</li>
-                            <li><strong>2. Cargar archivo CSV:</strong> El usuario puede subir su propio archivo de datos.</li>
-                            <li><strong>3. Entrenar modelo:</strong> Utiliza el archivo para entrenar un modelo de árbol de decisión.</li>
-                            <li><strong>4. Predecir riesgo:</strong> El modelo realiza predicciones y muestra resultados como precisión y puntuación F1.</li>
-                            <li><strong>5. Descargar resultados:</strong> Permite generar y descargar un archivo CSV con los resultados o empleados de alto riesgo.</li>
-                        </ul>
-                    </div>
-                    
+                        <span class="material-symbols-outlined upload-button" onclick="generarCSV(event, true)">pageview</span>
+                    </a>
                 </div>
             </div>
+            
             
             <script>
               
