@@ -1,0 +1,18 @@
+# Instrucciones para ejecutar los algoritmos
+
+El código se encuentra en el repositorio en la rama `tercera-entrega`. Dentro de esta se encuentra un instalador `.bat` que instala todas las dependencias necesarias para correr la aplicación en un localhost.
+
+Dado que la aplicación está implementada con Flask para la web, es necesario tener Flask instalado para ejecutarla. Esto se puede hacer de dos maneras:
+
+1. **Ejecutando el instalador** (`install.bat`), que automatiza la instalación de dependencias y la ejecución de la aplicación.
+2. **Instalando Flask manualmente** con `pip install flask` y luego ejecutando el archivo `app.py` manualmente.
+
+## Pasos para ejecutar la aplicación
+
+1. Ejecutar `install.bat`.
+2. Esperar a que se instalen todas las dependencias. La aplicación se ejecutará automáticamente una vez finalizada la instalación.
+   - **Importante**: No cerrar la ventana de `cmd` que se abre durante la instalación.
+3. Una vez que termine, la interfaz web se abrirá automáticamente en el navegador.
+
+Con estos pasos, la aplicación estará lista para usarse.
+

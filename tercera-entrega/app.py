@@ -54,9 +54,6 @@ if not os.path.exists(output_dir):
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-IMG_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'imagenes')
-os.makedirs(IMG_FOLDER, exist_ok=True)
-
 # funciones utilizadas para rutas
 
 @app.route('/')
