@@ -121,7 +121,8 @@ def generar_csv_pruebas():
         if n < 50:
             return jsonify({"error": "El número de empleados debe ser mayor a 50"}), 400
         generar_csv_empleados(n)
-        return jsonify({"mensaje": f"Archivo CSV de prueba generado en {output_dir}"})
+        input_dir = os.path.join(os.getcwd(), 'uploads')
+        return jsonify({"mensaje": f"Archivo CSV de prueba generado en {input_dir}"})
     except Exception as e:
         return jsonify({"error": f"Error al generar el CSV de prueba: {str(e)}"}), 500
 
