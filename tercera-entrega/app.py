@@ -171,7 +171,7 @@ def entrenar_modelo_arbol():
         return jsonify({"error": f"Ocurrió un error: {str(e)}"}), 500
 
     
-# funcion para predecir el modelo, utilizando el conjunto de entrenamiento y el completo
+# funcion para predecir el modelo utilizando el conjunto de entrenamiento y el completo
     
 @app.route('/predecir_arbol', methods=['POST'])
 def predecir_modelo_arbol():
@@ -255,7 +255,7 @@ def entrenar_modelo_regresion():
         return jsonify({"error": f"Ocurrió un error: {str(e)}"}), 500
 
     
-# funcion para predecir el modelo, utilizando el conjunto de entrenamiento y el completo
+# funcion para predecir el modelo utilizando el conjunto de entrenamiento y el completo
     
 @app.route('/predecir_regresion', methods=['POST'])
 def predecir_modelo_regresion():
@@ -305,7 +305,7 @@ def predecir_modelo_regresion():
     })
 
 
-# funcion para reiniciar las variables globales, para evitar que se acumulen datos de diferentes modelos
+# funcion para reiniciar las variables globales para evitar que se acumulen datos de diferentes modelos
 def reiniciar_variables():
     global modelo_a, modelo_r, x_train_a, x_test_a, y_test_a, x_full_a
     global x_train_r, x_test_r, y_test_r, x_full_r
@@ -320,7 +320,7 @@ def reiniciar_variables():
     y_test_r = None 
     x_full_r = None
 
-# muestra los resultados de los empleados con riesgo alto, utilizando el archivo generado por la funcion generar_csv
+# muestra los resultados de los empleados con riesgo alto utilizando el archivo generado por la funcion generar_csv
 @app.route('/resultados')
 def resultados():
     empleados_riesgo = []
