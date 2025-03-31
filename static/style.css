@@ -182,7 +182,7 @@ body:not(.dark-mode) .material-symbols-outlined.upload-button {
 
 body:not(.dark-mode) .material-symbols-outlined.upload-button:hover {
 
-    color: blueviolet !important;
+    color: #8a2be2 !important;
 
 }
 
@@ -513,7 +513,6 @@ body.dark-mode #modo-toggle {
     cursor: pointer;
     text-align: center;
     transition: background-color 0.3s ease, transform 0.2s ease;
-    display: inline-block; /* Asegura que todos tengan el mismo comportamiento */
 }
 
 .botones .button:hover {
@@ -872,7 +871,7 @@ body:not(.dark-mode) input[name="nombre_usuario"]:focus {
     border-bottom: 1px solid #ddd;
 }
 
-/* Estilo del enlace "Volver al inicio" */
+
 .boton-volver {
     display: inline-block;
     background-color: #000000;
@@ -1043,9 +1042,125 @@ body:not(.dark-mode) .zoom-controls .upload-button:hover {
     }
 }
 
-    
+
+.botones {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}
+
+
+.info-button {
+    color: black; 
+    font-size: 40px; 
+    border: none;
+    background: none; 
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: color 0.3s ease;
+}
+
+
+.info-button:hover {
+    color: #333; 
+}
+
+
+.modal {
+    display: block; 
+    position: fixed;
+    z-index: 9999; 
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.4); 
+    animation: fadeIn 0.3s ease-in-out;
+}
+
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
+.modal-content {
+    position: relative;
+    margin: 10% auto;
+    background-color: white;
+    padding: 30px; 
+    border-radius: 8px;
+    width: 70%; 
+    max-width: 800px; 
+}
+
+
+@keyframes aparecerCerrar {
+    0% {
+        opacity: 0;
+        transform: translateX(10px); 
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0); 
+    }
+}
+
+
+.close {
+    font-size: 30px;
+    color: #000; 
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    transition: color 0.3s ease;
+    animation: aparecerCerrar 0.3s ease-in-out; 
+}
+
+
+.close:hover {
+    color: rgb(116, 116, 116); 
+}
+
+
+.modal-list {
+    list-style-type: none; 
+    padding: 0; 
+}
+
+.modal-list li {
+    margin-bottom: 10px; 
+}
 
 
 
+input[type="number"] {
+    width: 80%; 
+    padding: 8px;
+    border-radius: 8px;
+    font-size: 16px;
+    background-color: #1e1e1e;
+    color: #ffffff;
+    text-align: center; 
+    transition: all 0.3s ease-in-out;
+}
+
+input[type="number"]:focus {
+    border-color: #8a2be2; 
+    box-shadow: 0 0 15px rgba(138, 43, 226, 0.7); 
+    outline: none;
+}
 
 
+#archivo-nombre {
+    font-size: 14px;
+    color: #bbb;
+}

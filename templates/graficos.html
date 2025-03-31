@@ -14,31 +14,48 @@
     </header>
     
     <div class="container">
+        <!-- Matriz de Riesgos -->
         <div class="matrix-container">
             <h2>Matriz de Confusión</h2>
-            <img id="matrixImage" class="matrix-img" src="{{ url_for('imagenes_files', filename='matriz_riesgos.png') }}" alt="Matriz">
+            <img 
+                id="matrixImage" 
+                class="matrix-img" 
+                src="{{ url_for('static', filename='imagenes/' + imagen_matriz) }}" 
+                alt="Matriz"
+            >
             <div class="zoom-controls">
                 <span class="material-symbols-outlined upload-button" onclick="zoomIn(0)">zoom_in</span>
                 <span class="material-symbols-outlined upload-button" onclick="zoomOut(0)">zoom_out</span>
                 <span class="material-symbols-outlined upload-button" onclick="resetZoom(0)">recenter</span>
             </div>
-            
-            <a href="../TP1-pp1/imagenes/matriz_riesgos.png" download="../TP1-pp1/imagenes/matriz_riesgos.png" class="download-btn">
+            <a 
+                href="{{ url_for('static', filename='imagenes/' + imagen_matriz) }}" 
+                download 
+                class="download-btn"
+            >
                 Descargar Matriz
             </a>
-        
         </div>
+    
+        <!-- Curva ROC -->
         <div class="curva-container">
             <h2>Curva ROC</h2>
-
-            <img id="curvaImage" class="matrix-img" src="{{ url_for('imagenes_files', filename='curva_roc.png') }}" alt="Curva">
+            <img 
+                id="curvaImage" 
+                class="matrix-img" 
+                src="{{ url_for('static', filename='imagenes/' + imagen_curva) }}" 
+                alt="Curva ROC"
+            >
             <div class="zoom-controls">
                 <span class="material-symbols-outlined upload-button" onclick="zoomIn(1)">zoom_in</span>
                 <span class="material-symbols-outlined upload-button" onclick="zoomOut(1)">zoom_out</span>
                 <span class="material-symbols-outlined upload-button" onclick="resetZoom(1)">recenter</span>
             </div>
-            
-            <a href="../TP1-pp1/imagenes/curva_roc.png" download="../TP1-pp1/imagenes/curva_roc.png" class="download-btn">
+            <a 
+                href="{{ url_for('static', filename='imagenes/' + imagen_curva) }}"
+                download 
+                class="download-btn"
+            >
                 Descargar Curva
             </a>
         </div>

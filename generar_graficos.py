@@ -5,9 +5,13 @@ from sklearn.metrics import confusion_matrix, roc_curve, auc
 import os
 import seaborn as sns
 
+# funcion encargada de generar la imagen de la matriz de confusión y guardarla en el directorio correspondiente
+
 def guardar_matriz_confusion(y_pred, x_test, y_test, clases=None, nombre_archivo='matriz_riesgos.png'):
 
-    os.makedirs('imagenes', exist_ok=True)
+    IMG_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'imagenes')
+
+    os.makedirs(IMG_FOLDER, exist_ok=True)
 
     matriz = confusion_matrix(y_test, y_pred)
 
@@ -22,7 +26,7 @@ def guardar_matriz_confusion(y_pred, x_test, y_test, clases=None, nombre_archivo
     plt.ylabel('Verdadero')
     plt.xlabel('Predicción')
 
-    ruta_completa = os.path.join('TP1-pp1/imagenes', nombre_archivo)
+    ruta_completa = os.path.join(IMG_FOLDER, nombre_archivo)
     plt.savefig(ruta_completa, bbox_inches='tight', dpi=300)
     plt.close()
     
@@ -30,7 +34,10 @@ def guardar_matriz_confusion(y_pred, x_test, y_test, clases=None, nombre_archivo
     
     return matriz
 
+# funcion encargada de generar la imagen de la curva ROC y guardarla en el directorio correspondiente
+
 def guardar_curva_roc(y_pred, y_test, nombre_archivo='curva_roc.png'):
+    IMG_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'imagenes')
     fpr, tpr, thresholds = roc_curve(y_test, y_pred)
     roc_auc = auc(fpr, tpr)
 
@@ -43,6 +50,6 @@ def guardar_curva_roc(y_pred, y_test, nombre_archivo='curva_roc.png'):
     plt.ylabel('Tasa de Verdaderos Positivos')
     plt.title('Curva ROC')
     plt.legend(loc="lower right")
-    ruta_completa = os.path.join('TP1-pp1/imagenes', nombre_archivo)
+    ruta_completa = os.path.join(IMG_FOLDER, nombre_archivo)
     plt.savefig(ruta_completa, bbox_inches='tight')
     plt.close()

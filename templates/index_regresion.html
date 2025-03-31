@@ -23,9 +23,6 @@
         </ul>
     </div>
 
-    <div id="informacion">
-    
-    </div>
     
     <img src="https://www.ungs.edu.ar/wp-content/uploads/2024/06/logo_ungs_512.png" alt="logo ungs">
 
@@ -36,51 +33,104 @@
                 <h1>Predicción de Riesgo de Salud Ocupacional</h1>
                 <div class="modelo">
                     <h2>Modelo de Regresión logística</h2>
-                    <span class="icono-info" data-tooltip="Este modelo predice el riesgo de problemas de salud ocupacional basándose en las horas trabajadas, ausencias, salario y género.">
-                        <i class="material-icons">help_outline</i>
-                    </span>
                 </div>
             </div>
             <div class="botones">
-                <div class="carga-archivo">
-                    <h3>Cargar archivo CSV</h3>
-                    <form id="upload-form" method="post" enctype="multipart/form-data">
-                        <label for="archivo">
-                            <span class="material-symbols-outlined upload-button" onclick="seleccionarArchivo()">upload_file</span>
-                        </label>
-                        <input id="archivo" type="file" name="file" accept=".csv" required style="display: none;">
-                    </form>
+                <!-- boton para abrir el ventana -->
+                <button class="info-button" onclick="abrirModal()">
+                    <span class="material-symbols-outlined">info</span>
+                </button>
+            
+                <div id="modal" class="modal" style="display: none;">
+                    <div class="modal-content">
+                        <span class="close" onclick="cerrarModal()">&times;</span>
+                        <h2>Información</h2>
+                        <p class="modal-description">
+                            Esta página permite al usuario interactuar con un modelo de Machine Learning para predecir el riesgo de salud ocupacional de los empleados.
+                        </p>
+                        <h3>Funciones principales:</h3>
+                        <ul class="modal-list">
+                            <li><strong>1. Generar datos:</strong> Crea un archivo CSV con información de empleados (mínimo 50).</li>
+                            <li><strong>2. Cargar archivo CSV:</strong> El usuario puede subir su propio archivo de datos.</li>
+                            <li><strong>3. Entrenar modelo:</strong> Utiliza el archivo para entrenar un modelo de árbol de decisión.</li>
+                            <li><strong>4. Predecir riesgo:</strong> El modelo realiza predicciones y muestra resultados como precisión y puntuación F1.</li>
+                            <li><strong>5. Descargar resultados:</strong> Permite generar y descargar un archivo CSV con los resultados o empleados de alto riesgo.</li>
+                        </ul>
+                    </div>
                 </div>
-                <h3>Entrenar: </h3>
-                <span class="material-symbols-outlined play-button" onclick="entrenarModelo()">play_arrow</span>
-                <p id="mensaje-entrenamiento"></p>
-                <div class="indicator-carga">
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                </div>
-                <h3>Predecir: </h3>
-                <span class="material-symbols-outlined play-button" onclick="predecirModelo()">play_arrow</span>
-                <p id="resultado-prediccion"></p>
-                <div class="indicator-carga">
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                    <div class="dot"></div>
-                </div>
-                <div class="descargar-archivo">
-                    <h4>Descargar CSV | Mostrar empleados | Visualizar graficos</h4>
-                    <span class="material-symbols-outlined upload-button" onclick="generarYDescargarCSV()">download</span>
+                        
+                            <!-- boton para generar CSV -->
+                            <h3>Generar CSV</h3>
+                            <label for="numeroEmpleados">Número de empleados (mínimo 50):</label>
+                            <input type="number" id="numeroEmpleados" min="50" value="50">
+                            <span class="material-symbols-outlined upload-button" onclick="generarCSVEmpleados()">note_add</span>
+                            <div id="loader" style="display: none; margin: 10px 0;">
+                                <p>Generando archivo CSV...</p>
+                            </div>
+                            <div id="resultado" style="margin: 10px 0;"></div>
+                        
+                            <!-- boton para cargar CSV -->
+                            <div class="carga-archivo">
+                                <h3>Cargar archivo CSV</h3>
+                                <form id="upload-form" method="post" enctype="multipart/form-data">
+                                    <label for="archivo">
+                                        <span class="material-symbols-outlined upload-button" onclick="seleccionarArchivo()">upload_file</span>
+                                    </label>
+                                    <input id="archivo" type="file" name="file" accept=".csv" required style="display: none;">
+                                </form>
+                            </div>
+                        
+                            <!-- boton para entrenar el modelo -->
+                            <h3>Entrenar: </h3>
+                            <span class="material-symbols-outlined play-button" onclick="entrenarModelo()">play_arrow</span>
+                            <p id="mensaje-entrenamiento"></p>
+                            <div class="indicator-carga">
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                            </div>
+                        
+                            <!-- boton para predecir -->
+                            <h3>Predecir: </h3>
+                            <span class="material-symbols-outlined play-button" onclick="predecirModelo()">play_arrow</span>
+                            <p id="resultado-prediccion"></p>
+                            <div class="indicator-carga">
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                                <div class="dot"></div>
+                            </div>
+                        
+                            <!-- bton para descargar resultados -->
+                            <div class="descargar-archivo">
+                                <h4>Descargar CSV | Mostrar empleados | Mostrar graficos</h4>
+                                <span class="material-symbols-outlined upload-button" onclick="generarYDescargarCSV()">download</span>
+                        
+                                <a href="{{ url_for('resultados') }}">
+                                    <span class="material-symbols-outlined upload-button" onclick="generarCSV(event, true)">pageview</span>
+                                </a>
+                                <a href="/graficos">
+                                    <span class="material-symbols-outlined upload-button">analytics</span>
+                                </a>
+                            </div>
+                        </div>
+            
+            <script>
+              
+                function abrirModal() {
+                    document.getElementById('modal').style.display = 'block';
+                }
+            
+                function cerrarModal() {
+                    document.getElementById('modal').style.display = 'none';
+                }
 
-                    <a href="{{ url_for('resultados') }}">
-                        <span class="material-symbols-outlined upload-button" onclick="generarCSV()">pageview</span>
-                    </a>
-                    <a href="/graficos">
-                        <span class="material-symbols-outlined upload-button">analytics</span>
-                    </a>        
-                </div>
-            </div>
-        </div>
-    </div>
+                window.onclick = function(event) {
+    const modal = document.getElementById("modal");
+    if (event.target == modal) {
+        modal.style.display = "none";
+    }
+}
+            </script>
 
     <script>
         function toggleMenu() {
@@ -214,7 +264,9 @@
             });
         }
 
-        function generarCSV() {
+        function generarCSV(event = null, redirect = false) {
+            if (event) event.preventDefault();
+
             return fetch('/generar_csv', {
                 method: 'POST',
                 headers: {
@@ -224,13 +276,16 @@
             })
             .then(response => response.json())
             .then(data => {
-                if (data.error) {
-                    throw new Error(data.error);
+                if (data.error) throw new Error(data.error);
+
+                if (redirect) {
+                    window.location.href = "{{ url_for('resultados') }}";
                 }
                 return data;
             })
             .catch(error => {
                 console.error('Error:', error);
+                alert("Error al generar el CSV: " + error.message);
                 throw error;
             });
         }
@@ -257,6 +312,46 @@
                 }
             })
             .catch(error => console.error('Error:', error));
+        }
+
+        async function generarCSVEmpleados() {
+            const input = document.getElementById('numeroEmpleados');
+            const n = parseInt(input.value);
+            const resultadoDiv = document.getElementById('resultado');
+            
+            if (isNaN(n) || n < 50) {
+                resultadoDiv.innerHTML = '<p class="error">El número debe ser ≥ 50</p>';
+                input.focus();
+                return;
+            }
+
+            const loader = document.getElementById('loader');
+            if (loader) loader.style.display = 'block';
+
+            try {
+                const response = await fetch('/generar_csv_pruebas', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ n: n }),
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Error en el servidor');
+                }
+
+                resultadoDiv.innerHTML = `<p class="success">${data.mensaje}</p>`;
+                console.log('CSV generado:', data);
+
+            } catch (error) {
+                console.error('Error:', error);
+                resultadoDiv.innerHTML = `<p class="error">${error.message}</p>`;
+            } finally {
+                if (loader) loader.style.display = 'none';
+            }
         }
     </script>
     <script>

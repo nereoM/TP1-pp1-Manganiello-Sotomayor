@@ -15,6 +15,7 @@ import json
 import csv
 import hashlib
 from generar_graficos import guardar_matriz_confusion, guardar_curva_roc
+from generar_csv import generar_csv_empleados
 from verificar_columnas import verificar_columnas
 import os
 import time
@@ -114,13 +115,13 @@ def index():
 def regresion():
     return render_template("index_regresion.html")
 
-@app.route("/graficos")
-def graficos():
-    return render_template("graficos.html")
+@app.route('/graficos')
+def mostrar_graficos():
+    return render_template('graficos.html', 
+        imagen_matriz="matriz_riesgos.png",
+        imagen_curva="curva_roc.png"
+    )
 
-@app.route('/imagenes/<path:filename>')
-def imagenes_files(filename):
-    return send_from_directory(os.path.join(app.root_path, 'imagenes'), filename)
 
 @app.route('/historial', methods=['GET'])
 def mostrar_historial():
@@ -199,34 +200,47 @@ def subir_archivo():
         return jsonify({"error": "El archivo no tiene nombre"}), 400
     
     filename = secure_filename(file.filename)
-    temp_filepath = os.path.join(app.config['UPLOAD_FOLDER'], f"temp_{filename}")
-    final_filepath = os.path.join(app.config['UPLOAD_FOLDER'], filename)
 
     try:
-        file.save(temp_filepath)
 
-        if not verificar_columnas(temp_filepath):
-            os.remove(temp_filepath)
-            return jsonify({"error": "El archivo no tiene las columnas requeridas"}), 400
-
-        if os.path.exists(final_filepath):
-            os.remove(final_filepath)
-        os.rename(temp_filepath, final_filepath)
-
-        usuario = session.get('usuario', None)
-        if usuario:
+        from io import BytesIO
+        file_bytes = BytesIO(file.read())
+  
+        file_bytes.seek(0)
+        if not verificar_columnas(file_bytes):
+            return jsonify({"error": "Columnas requeridas faltantes"}), 400
+        
+        file_bytes.seek(0)
+        filename = secure_filename(file.filename)
+        ruta_final = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        
+        for intento in range(3):
             try:
-                agregar_entrada(usuario, filename)
-            except Exception as e:
-                return jsonify({"error": f"Error en historial: {str(e)}"}), 500
-
-        return jsonify({"mensaje": "Archivo subido correctamente", "filepath": final_filepath})
-
+                with open(ruta_final, 'wb') as f:
+                    f.write(file_bytes.getbuffer())
+                break
+            except PermissionError:
+                time.sleep(0.5)
+        else:
+            raise PermissionError("No se pudo guardar el archivo")
+        
+        return jsonify({"mensaje": "Archivo subido correctamente", "filepath": ruta_final})
+    
     except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
-        if os.path.exists(temp_filepath):
-            os.remove(temp_filepath)
-        return jsonify({"error": f"Error al procesar archivo: {str(e)}"}), 500
+
+@app.route('/generar_csv_pruebas', methods=['POST'])
+def generar_csv_pruebas():
+    try:
+        n = request.json.get('n', 50)
+        if n < 50:
+            return jsonify({"error": "El número de empleados debe ser mayor a 50"}), 400
+        generar_csv_empleados(n)
+        input_dir = os.path.join(os.getcwd(), 'uploads')
+        return jsonify({"mensaje": f"Archivo CSV de prueba generado en {input_dir}"})
+    except Exception as e:
+        return jsonify({"error": f"Error al generar el CSV de prueba: {str(e)}"}), 500
 
 
 # funcion para entrenar el modelo utilizando arboles de decision
@@ -290,6 +304,8 @@ def predecir_modelo_arbol():
                          nombre_archivo='matriz_riesgos.png')
     
     guardar_curva_roc(prediccion, y_test_a, nombre_archivo='curva_roc.png')
+
+    reiniciar_variables()
 
     return jsonify({
         "precision": precision,
@@ -363,6 +379,8 @@ def predecir_modelo_regresion():
     
     guardar_curva_roc(prediccion, y_test_r, nombre_archivo='curva_roc.png')
 
+    reiniciar_variables()
+
     return jsonify({
         "precision": precision,
         "memoria": memoria,
@@ -371,13 +389,31 @@ def predecir_modelo_regresion():
     })
 
 
+# funcion para reiniciar las variables globales para evitar que se acumulen datos de diferentes modelos
+def reiniciar_variables():
+    global modelo_a, modelo_r, x_train_a, x_test_a, y_test_a, x_full_a
+    global x_train_r, x_test_r, y_test_r, x_full_r
+    modelo_a = None
+    modelo_r = None
+    x_train_a = None
+    x_test_a = None
+    y_test_a = None
+    x_full_a = None
+    x_train_r = None
+    x_test_r = None
+    y_test_r = None 
+    x_full_r = None
+
+
 # generamos el csv con las predicciones de riesgos
 
 @app.route('/generar_csv', methods=['POST'])
 def generar_csv():
 
     global df_unido
+    print("Antes de transformar:", df_unido.head())
     df_transformed = transformar_riesgos(df_unido)
+    print("Después de transformar:", df_transformed.head())
 
     ruta_csv = os.path.join(output_dir, "empleados_con_riesgo.csv")
 
@@ -389,6 +425,7 @@ def generar_csv():
         return jsonify({"mensaje": "CSV generado con predicciones", "csv_path": ruta_csv})
     except Exception as e:
         return jsonify({"error": f"Error al guardar el archivo: {str(e)}"}), 500
+
 
 # lee del csv generado todos los empleados que sean de alto riesgo
 # para luego guardarlos y enviarlos al front
