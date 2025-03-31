@@ -1,5 +1,6 @@
 /downloads/
 /uploads/
+/static/imagenes/*
 __pycache__/
 */__pycache__/
 **/__pycache__/

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análisis de Riesgo - Matriz de Confusión</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" />
+</head>
+<body>
+    <header>
+        <h1>Análisis de Riesgo Laboral</h1>
+        <p>Matriz de Confusión - Modelo Predictivo</p>
+    </header>
+    
+    <div class="container">
+        <!-- Matriz de Riesgos -->
+        <div class="matrix-container">
+            <h2>Matriz de Confusión</h2>
+            <img 
+                id="matrixImage" 
+                class="matrix-img" 
+                src="{{ url_for('static', filename='imagenes/' + imagen_matriz) }}" 
+                alt="Matriz"
+            >
+            <div class="zoom-controls">
+                <span class="material-symbols-outlined upload-button" onclick="zoomIn(0)">zoom_in</span>
+                <span class="material-symbols-outlined upload-button" onclick="zoomOut(0)">zoom_out</span>
+                <span class="material-symbols-outlined upload-button" onclick="resetZoom(0)">recenter</span>
+            </div>
+            <a 
+                href="{{ url_for('static', filename='imagenes/' + imagen_matriz) }}" 
+                download 
+                class="download-btn"
+            >
+                Descargar Matriz
+            </a>
+        </div>
+    
+        <!-- Curva ROC -->
+        <div class="curva-container">
+            <h2>Curva ROC</h2>
+            <img 
+                id="curvaImage" 
+                class="matrix-img" 
+                src="{{ url_for('static', filename='imagenes/' + imagen_curva) }}" 
+                alt="Curva ROC"
+            >
+            <div class="zoom-controls">
+                <span class="material-symbols-outlined upload-button" onclick="zoomIn(1)">zoom_in</span>
+                <span class="material-symbols-outlined upload-button" onclick="zoomOut(1)">zoom_out</span>
+                <span class="material-symbols-outlined upload-button" onclick="resetZoom(1)">recenter</span>
+            </div>
+            <a 
+                href="{{ url_for('static', filename='imagenes/' + imagen_curva) }}"
+                download 
+                class="download-btn"
+            >
+                Descargar Curva
+            </a>
+        </div>
+    </div>
+
+    <script>
+        let currentScaleM = 1;
+        let currentScaleC = 1;
+        const matrixImage = document.getElementById('matrixImage');
+        const curvaImage = document.getElementById('curvaImage');
+    
+        function zoomIn(i) {
+            if (i == 0) {
+                currentScaleM += 0.2;
+                matrixImage.style.transform = `scale(${currentScaleM})`;
+            } else {
+                currentScaleC += 0.2;
+                curvaImage.style.transform = `scale(${currentScaleC})`;
+            }
+        }
+    
+        function zoomOut(i) {
+            if (currentScaleM > 0.6 && i == 0) {
+                currentScaleM -= 0.2;
+                matrixImage.style.transform = `scale(${currentScaleM})`;
+            }
+            if (currentScaleC > 0.6 && i == 1) {
+                currentScaleC -= 0.2;
+                curvaImage.style.transform = `scale(${currentScaleC})`;
+            }
+        }
+    
+        function resetZoom(i) {
+            if (i == 0) {
+                currentScaleM = 1;
+                matrixImage.style.transform = 'scale(1)';
+            } else {
+                currentScaleC = 1;
+                curvaImage.style.transform = 'scale(1)';
+            }
+        }
+    </script>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const modoOscuro = localStorage.getItem("modo_oscuro") === "true";
+        document.body.classList.toggle("dark-mode", modoOscuro);
+    });
+</script>
+
+</body>
+</html>

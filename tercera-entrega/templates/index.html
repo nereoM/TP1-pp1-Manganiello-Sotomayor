@@ -101,12 +101,15 @@
             
                 <!-- bton para descargar resultados -->
                 <div class="descargar-archivo">
-                    <h4>Descargar CSV | Mostrar empleados</h4>
+                    <h4>Descargar CSV | Mostrar empleados | Mostrar graficos</h4>
                     <span class="material-symbols-outlined upload-button" onclick="generarYDescargarCSV()">download</span>
             
                     <a href="{{ url_for('resultados') }}">
                         <span class="material-symbols-outlined upload-button" onclick="generarCSV(event, true)">pageview</span>
                     </a>
+                    <a href="/graficos">
+                        <span class="material-symbols-outlined upload-button">analytics</span>
+                    </a> 
                 </div>
             </div>
             

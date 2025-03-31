@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, jsonify, send_file, session
+from flask import Flask, render_template, request, jsonify, send_file, session, send_from_directory
 import pickle
 import numpy as np
 from arbol_decision import main_a
@@ -17,6 +17,7 @@ from werkzeug.utils import secure_filename
 import shutil
 from generar_csv import generar_csv_empleados
 from verificar_columnas import verificar_columnas
+from generar_graficos import guardar_matriz_confusion, guardar_curva_roc
 
 # necesario para el ejecutable
 try:
@@ -53,6 +54,8 @@ if not os.path.exists(output_dir):
 UPLOAD_FOLDER = 'uploads'
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
+IMG_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'imagenes')
+os.makedirs(IMG_FOLDER, exist_ok=True)
 
 # funciones utilizadas para rutas
 
@@ -70,6 +73,14 @@ def index():
 @app.route("/regresion")
 def regresion():
     return render_template("index_regresion.html")
+
+
+@app.route('/graficos')
+def mostrar_graficos():
+    return render_template('graficos.html', 
+        imagen_matriz="matriz_riesgos.png",
+        imagen_curva="curva_roc.png"
+    )
 
 
 # funcion encargada de verificar que existe el archivo y contiene las columnas requeridas
@@ -193,6 +204,12 @@ def predecir_modelo_arbol():
     memoria = recall_score(y_test_a, prediccion, average='binary')
     f1 = f1_score(y_test_a, prediccion, average='binary')
 
+    guardar_matriz_confusion(prediccion, x_test_a, y_test_a, 
+                         clases=['Bajo Riesgo', 'Alto Riesgo'],
+                         nombre_archivo='matriz_riesgos.png')
+
+    guardar_curva_roc(prediccion, y_test_a, nombre_archivo='curva_roc.png')
+
     reiniciar_variables()
 
     return jsonify({
@@ -271,6 +288,12 @@ def predecir_modelo_regresion():
     precision = precision_score(y_test_r, prediccion, average='binary')
     memoria = recall_score(y_test_r, prediccion, average='binary')
     f1 = f1_score(y_test_r, prediccion, average='binary')
+
+    guardar_matriz_confusion(prediccion, x_test_a, y_test_a, 
+                         clases=['Bajo Riesgo', 'Alto Riesgo'],
+                         nombre_archivo='matriz_riesgos.png')
+
+    guardar_curva_roc(prediccion, y_test_a, nombre_archivo='curva_roc.png')
 
     reiniciar_variables()
 
