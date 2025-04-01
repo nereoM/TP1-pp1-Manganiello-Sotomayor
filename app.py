@@ -14,7 +14,7 @@ from datetime import datetime
 import json
 import csv
 import hashlib
-from generar_graficos import guardar_matriz_confusion, guardar_curva_roc
+from generar_graficos import guardar_matriz_confusion, guardar_curva_roc, guardar_curva_aprendizaje
 from generar_csv import generar_csv_empleados
 from verificar_columnas import verificar_columnas
 import os
@@ -33,10 +33,12 @@ df_datos = None
 df_riesgos = None
 x_train_a = None
 x_test_a = None
+y_train_a = None
 y_test_a = None
 x_full_a = None
 x_train_r = None
 x_test_r = None
+y_train_r = None
 y_test_r = None 
 x_full_r = None
 df  = None
@@ -119,7 +121,8 @@ def regresion():
 def mostrar_graficos():
     return render_template('graficos.html', 
         imagen_matriz="matriz_riesgos.png",
-        imagen_curva="curva_roc.png"
+        imagen_curva="curva_roc.png",
+        imagen_curva_aprendizaje="curva_aprendizaje.png"
     )
 
 
@@ -247,7 +250,7 @@ def generar_csv_pruebas():
 
 @app.route('/entrenar_arbol', methods=['POST'])
 def entrenar_modelo_arbol():
-    global modelo_a, df_datos, df_riesgos, x_train_a, x_test_a, y_test_a, x_full_a
+    global modelo_a, df_datos, df_riesgos, x_train_a, x_test_a, y_train_a, y_test_a, x_full_a
     try:
         data = request.get_json()
         filepath = data.get('filepath')
@@ -259,7 +262,7 @@ def entrenar_modelo_arbol():
             return jsonify({"error": "El archivo no existe"}), 400
         print("antes de llamar a main_a")
         # llamamos a la funcion main de arbol_decision, donde se encuentra la logica principal del entrenamiento del modelo
-        modelo_a, x_train_a, x_test_a, y_test_a, x_full_a, df_datos = main_a(filepath)
+        modelo_a, x_train_a, x_test_a, y_train_a, y_test_a, x_full_a, df_datos = main_a(filepath)
 
         return jsonify({"mensaje": "Modelo entrenado correctamente"})
     except Exception as e:
@@ -270,7 +273,7 @@ def entrenar_modelo_arbol():
     
 @app.route('/predecir_arbol', methods=['POST'])
 def predecir_modelo_arbol():
-    global modelo_a, df_datos, df_riesgos, x_train_a, x_test_a, y_test_a, x_full_a, df, df_unido
+    global modelo_a, df_datos, df_riesgos, x_train_a, x_test_a, y_train_a, y_test_a, x_full_a, df, df_unido
     
     if modelo_a is None:
         return jsonify({"error": "Primero entrena el modelo"}), 400
@@ -305,6 +308,8 @@ def predecir_modelo_arbol():
     
     guardar_curva_roc(prediccion, y_test_a, nombre_archivo='curva_roc.png')
 
+    guardar_curva_aprendizaje(modelo_a, x_train_a, x_test_a, y_train=y_train_a, y_test=y_test_a)
+
     reiniciar_variables()
 
     return jsonify({
@@ -319,7 +324,7 @@ def predecir_modelo_arbol():
 
 @app.route('/entrenar_regresion', methods=['POST'])
 def entrenar_modelo_regresion():
-    global modelo_r, df_datos, df_riesgos, x_train_r, x_test_r, y_test_r, x_full_r
+    global modelo_r, df_datos, df_riesgos, x_train_r, x_test_r, y_train_r, y_test_r, x_full_r
     try:
         data = request.get_json()
         filepath = data.get('filepath')
@@ -332,7 +337,7 @@ def entrenar_modelo_regresion():
 
         # llamamos a la funcion main de regresion_logistica, donde se encuentra la logica principal del entrenamiento del modelo
 
-        modelo_r, x_train_r, x_test_r, y_test_r, x_full_r, df_datos = main_r(filepath)
+        modelo_r, x_train_r, x_test_r, y_train_r, y_test_r, x_full_r, df_datos = main_r(filepath)
 
         return jsonify({"mensaje": "Modelo entrenado correctamente"})
     except Exception as e:
@@ -343,7 +348,7 @@ def entrenar_modelo_regresion():
     
 @app.route('/predecir_regresion', methods=['POST'])
 def predecir_modelo_regresion():
-    global modelo_r, df_datos, df_riesgos, x_train_r, x_test_r, y_test_r, x_full_r, df, df_unido
+    global modelo_r, df_datos, df_riesgos, x_train_r, x_test_r, y_train_r, y_test_r, x_full_r, df, df_unido
     
     if modelo_r is None:
         return jsonify({"error": "Primero entrena el modelo"}), 400
@@ -378,6 +383,8 @@ def predecir_modelo_regresion():
                          nombre_archivo='matriz_riesgos.png')
     
     guardar_curva_roc(prediccion, y_test_r, nombre_archivo='curva_roc.png')
+
+    guardar_curva_aprendizaje(modelo_r, x_train_r, x_test_r, y_train=y_train_r, y_test=y_test_r)
 
     reiniciar_variables()
 

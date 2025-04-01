@@ -60,4 +60,4 @@ def main_a(ruta_archivo):
 
     x_full = scaler.transform(x)
 
-    return arbol, x_train, x_test, y_test, x_full, df_original
+    return arbol, x_train, x_test, y_train, y_test, x_full, df_original

@@ -59,22 +59,49 @@
                 Descargar Curva
             </a>
         </div>
+        <div class="curva-container">
+            <h2>Curva de Aprendizaje</h2>
+            <img 
+                id="curva2Image" 
+                class="aprendizaje-img" 
+                src="{{ url_for('static', filename='imagenes/' + imagen_curva_aprendizaje) }}" 
+                alt="Curva de Aprendizaje"
+            >
+            <div class="zoom-controls">
+                <span class="material-symbols-outlined upload-button" onclick="zoomIn(2)">zoom_in</span>
+                <span class="material-symbols-outlined upload-button" onclick="zoomOut(2)">zoom_out</span>
+                <span class="material-symbols-outlined upload-button" onclick="resetZoom(2)">recenter</span>
+            </div>
+            <a 
+                href="{{ url_for('static', filename='imagenes/' + imagen_curva_aprendizaje) }}"
+                download 
+                class="download-btn"
+            >
+                Descargar Curva
+            </a>
+        </div>
     </div>
 
     <script>
         let currentScaleM = 1;
         let currentScaleC = 1;
+        let currentScaleC2 = 1;
         const matrixImage = document.getElementById('matrixImage');
         const curvaImage = document.getElementById('curvaImage');
+        const curva2Image = document.getElementById('curva2Image');
     
         function zoomIn(i) {
             if (i == 0) {
                 currentScaleM += 0.2;
                 matrixImage.style.transform = `scale(${currentScaleM})`;
-            } else {
+            } if (i == 1) {
                 currentScaleC += 0.2;
                 curvaImage.style.transform = `scale(${currentScaleC})`;
+            } if (i == 2) {
+                currentScaleC2 += 0.2;
+                curva2Image.style.transform = `scale(${currentScaleC2})`;
             }
+
         }
     
         function zoomOut(i) {
@@ -86,15 +113,22 @@
                 currentScaleC -= 0.2;
                 curvaImage.style.transform = `scale(${currentScaleC})`;
             }
+            if (currentScaleC2 > 0.6 && i == 2) {
+                currentScaleC2 -= 0.2;
+                curva2Image.style.transform = `scale(${currentScaleC2})`;
+            }
         }
     
         function resetZoom(i) {
             if (i == 0) {
                 currentScaleM = 1;
                 matrixImage.style.transform = 'scale(1)';
-            } else {
+            } if (i == 1) {
                 currentScaleC = 1;
                 curvaImage.style.transform = 'scale(1)';
+            } if (i == 2) {
+                currentScaleC2 = 1;
+                curva2Image.style.transform = 'scale(1)';
             }
         }
     </script>
