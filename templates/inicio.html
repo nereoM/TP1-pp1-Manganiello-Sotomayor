@@ -11,12 +11,10 @@
 </head>
 <body class="{{ 'dark-mode' if modo_oscuro == 'true' else '' }}">
 
-
     <button id="modo-toggle" onclick="cambiarModo()">
         <span class="material-symbols-outlined moon" id="icono-modo">nightlight_round</span>
         <span class="material-symbols-outlined sun" id="icono-modo">wb_sunny</span>
     </button>
-
 
     <button id="informacionBtn" class="button informacion-btn">Información</button>
 
@@ -42,9 +40,7 @@
                     <button class="button">Cerrar sesión</button>
                 </a>
             </div>
-            
         {% else %}
->
             <div id="inicioModal" class="inicio-modal">
                 <div class="inicio-modal-content">
                     <p>Ingrese nombre de usuario:</p>
@@ -57,30 +53,27 @@
         {% endif %}
     </div>
 
+    <div id="informacionModal" class="informacion-modal">
+        <div class="informacion-modal-content">
+            <span class="informacion-close">&times;</span>
+            <h2>Información del Proyecto</h2>
+            <p><strong>Descripción:</strong></p>
+            <p>Este proyecto utiliza inteligencia artificial para predecir el riesgo de salud ocupacional de los empleados mediante Machine Learning, específicamente con regresión logística y árboles de decisión. La plataforma permite cargar datos, realizar predicciones individuales, ver el historial de usuarios y generar archivos CSV con los resultados.</p>
+            
+            <p><strong>Funcionalidades:</strong></p>
+            <ul>
+                <li>Predicción de riesgo ocupacional de empleados.</li>
+                <li>Visualización del historial de predicciones.</li>
+                <li>Generación y descarga de archivos CSV.</li>
+                <li>Filtrado y visualización de empleados de alto riesgo.</li>
+            </ul>
 
-<div id="informacionModal" class="informacion-modal">
-    <div class="informacion-modal-content">
-        <span class="informacion-close">&times;</span>
-        <h2>Información del Proyecto</h2>
-        <p><strong>Descripción:</strong></p>
-        <p>Este proyecto utiliza inteligencia artificial para predecir el riesgo de salud ocupacional de los empleados mediante Machine Learning, específicamente con regresión logística y árboles de decisión. La plataforma permite cargar datos, realizar predicciones individuales, ver el historial de usuarios y generar archivos CSV con los resultados.</p>
-        
-        <p><strong>Funcionalidades:</strong></p>
-        <ul>
-            <li>Predicción de riesgo ocupacional de empleados.</li>
-            <li>Visualización del historial de predicciones.</li>
-            <li>Generación y descarga de archivos CSV.</li>
-            <li>Filtrado y visualización de empleados de alto riesgo.</li>
-        </ul>
-
-        <p><strong>Autores:</strong></p>
-        <p>Desarrollado por Nereo Manganiello y Nazareno Sotomayor.</p>
+            <p><strong>Autores:</strong></p>
+            <p>Desarrollado por Nereo Manganiello y Nazareno Sotomayor.</p>
+        </div>
     </div>
-</div>
-
 
     <script>
-  
         function cambiarModo() {
             const body = document.body;
             const modoOscuro = body.classList.contains("dark-mode");
@@ -92,11 +85,9 @@
             document.querySelector(".moon").style.display = modoOscuro ? "none" : "block";
         }
 
-
         var modal = document.getElementById("inicioModal");
         var btn = document.getElementById("informacionBtn");
 
-n
         btn.onclick = function() {
             modal.style.display = "block";
         }
@@ -107,15 +98,12 @@ n
             }
         }
 
-
         var informacionModal = document.getElementById("informacionModal");
         var informacionBtn = document.getElementById("informacionBtn");
-
 
         informacionBtn.onclick = function() {
             informacionModal.style.display = "block";
         }
-
 
         window.onclick = function(event) {
             if (event.target == informacionModal) {
