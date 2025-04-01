@@ -1177,3 +1177,34 @@ input[type="number"]:focus {
     font-size: 14px;
     color: #bbb;
 }
+
+.contenedor-boton {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.boton-borrar {
+    background-color: #000000;
+    color: white;
+    font-size: 16px;
+    padding: 12px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.3s, transform 0.2s;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.boton-borrar:hover {
+    background-color: #000000;
+    transform: scale(1.05);
+}
+
+.boton-borrar:active {
+    transform: scale(0.95);
+}
+

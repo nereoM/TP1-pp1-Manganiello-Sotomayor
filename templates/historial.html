@@ -12,6 +12,25 @@
         <h1>Historial de Usuarios</h1>
         
 
+        <button id="borrar-historial" class="boton-borrar">Borrar Historial</button>
+
+        
+
+<script>
+    document.getElementById("borrar-historial").addEventListener("click", function() {
+        if (confirm("¿Estás seguro de que quieres borrar el historial?")) {
+            fetch("/limpiar_historial", { method: "POST" })
+            .then(response => response.json())
+            .then(data => {
+                alert(data.mensaje);
+                location.reload();
+            })
+            .catch(error => console.error("Error:", error));
+        }
+    });
+</script>
+
+
         
         {% if historial %}
             <table class="tabla-historial">

@@ -132,6 +132,8 @@ def mostrar_historial():
     return render_template('historial.html', historial=historial)
 
 
+
+
 @app.route('/predecir_individual', methods=['GET', 'POST'])
 def predecir_individual():
     global modelo_r, modelo_a, x_train, x_test, y_test, x_full, df_datos
@@ -481,6 +483,16 @@ def descargar_csv():
         return jsonify({"error": "El archivo CSV no existe"}), 404
 
     return send_file(ruta_csv, as_attachment=True, download_name="empleados_con_riesgo.csv")
+
+@app.route('/limpiar_historial', methods=['POST'])
+def limpiar_historial():
+    try:
+        with open('historial.json', 'w') as archivo:
+            json.dump([], archivo, indent=4)
+        return jsonify({"mensaje": "Historial limpiado correctamente"}), 200
+    except Exception as e:
+        return jsonify({"error": f"Error al limpiar el historial: {str(e)}"}), 500
+
 
 # cambia entre el modo oscuro y claro del fondo
 
