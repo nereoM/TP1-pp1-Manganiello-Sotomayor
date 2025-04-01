@@ -763,7 +763,11 @@ input[name="nombre_usuario"]:focus {
 
 /* Placeholder */
 input[name="nombre_usuario"]::placeholder {
-    color: rgba(255, 255, 255, 0.6);
+    color: rgba(254, 254, 254, 0.6);
+}
+
+body.dark-mode input[name="nombre_usuario"]::placeholder {
+    color: rgb(204, 204, 204);
 }
 
 /* Estilo en modo oscuro */
@@ -1107,7 +1111,17 @@ body:not(.dark-mode) .zoom-controls .upload-button:hover {
 .modal-content {
     position: relative;
     margin: 10% auto;
-    background-color: white;
+    background-color: rgb(0, 0, 0);
+    padding: 30px; 
+    border-radius: 8px;
+    width: 70%; 
+    max-width: 800px; 
+}
+
+body:not(.dark-mode) .modal-content {
+    position: relative;
+    margin: 10% auto;
+    background-color: white !important;
     padding: 30px; 
     border-radius: 8px;
     width: 70%; 
@@ -1128,6 +1142,18 @@ body:not(.dark-mode) .zoom-controls .upload-button:hover {
 
 
 .close {
+    font-size: 30px;
+    color: #ffffff; 
+    cursor: pointer;
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    transition: color 0.3s ease;
+    animation: aparecerCerrar 0.3s ease-in-out; 
+}
+
+
+body:not(.dark-mode) .close {
     font-size: 30px;
     color: #000; 
     cursor: pointer;
@@ -1167,11 +1193,19 @@ input[type="number"] {
 }
 
 input[type="number"]:focus {
+    border-color: #1e90ff; /* Azul más intenso */
+    box-shadow: 0 0 15px rgba(30, 144, 255, 0.8); /* Más azul y un poco más brillante */
+    outline: none;
+}
+
+
+
+
+body:not(.dark-mode) input[type="number"]:focus {
     border-color: #8a2be2; 
     box-shadow: 0 0 15px rgba(138, 43, 226, 0.7); 
     outline: none;
 }
-
 
 #archivo-nombre {
     font-size: 14px;
