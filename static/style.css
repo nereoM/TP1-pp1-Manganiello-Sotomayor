@@ -1339,7 +1339,147 @@ ul {
 
 
 .imagen-bienvenida {
+    display: block;
+    margin: 0 auto 140px auto;
     width: 300px; 
     height: auto;
-    margin-bottom: 180px;
+    transition: transform 0.3s ease, filter 0.3s ease;
+    filter: brightness(0.9);
+}
+.imagen-bienvenida:hover {
+    transform: scale(1.1);
+    filter: brightness(1.1);
+}
+.imagen-bienvenida-container {
+    text-align: center;
+    margin-top: -20px;
+    animation: fadeInDown 0.8s ease-out;
+}
+@keyframes fadeInDown {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #1e1e2f;
+    color: #fff;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.contenido_predecir_individual {
+    background: #29293d;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+    width: 350px;
+    text-align: center;
+    animation: fadeIn 0.8s ease-in-out;
+}
+
+h1 {
+    font-size: 22px;
+    margin-bottom: 15px;
+}
+
+.formulario {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    font-size: 14px;
+    margin-bottom: 5px;
+    text-align: left;
+    display: block;
+}
+
+input, select {
+    padding: 8px;
+    border-radius: 5px;
+    border: none;
+    margin-bottom: 10px;
+    font-size: 14px;
+    background: #1e1e2f;
+    color: #fff;
+    outline: none;
+    transition: 0.3s;
+}
+
+input:focus, select:focus {
+    transform: scale(1.05);
+    border: 1px solid #007bff;
+}
+
+.boton-principal {
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.boton-principal:hover {
+    background: #0056b3;
+    transform: scale(1.05);
+}
+
+
+
+/* Animaciones */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.resultado {
+    display: none; 
+    margin-top: 15px;
+    padding: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    border-radius: 5px;
+    background: #44446a;
+    animation: aparecer 0.6s ease-in-out;
+}
+
+@keyframes aparecer {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }

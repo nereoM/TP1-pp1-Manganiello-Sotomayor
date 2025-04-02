@@ -8,9 +8,9 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 </head>
+<body>
 
-
-    <div class="contenido">
+    <div class="contenido_predecir_individual">
         <h1>Formulario de Predicción Individual</h1>
         <form method="POST" action="/predecir_individual" class="formulario">
             <label for="horas_trabajadas">Horas Trabajadas:</label>
@@ -35,7 +35,7 @@
         </form>
 
         {% if resultado %}
-        <div class="resultado">
+        <div class="resultado" style="display: none;">
             <h3>Riesgo: {{ resultado }}</h3>
         </div>
         {% endif %}
@@ -43,10 +43,26 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            const resultadoDiv = document.querySelector(".resultado");
+            
+            if (resultadoDiv && resultadoDiv.innerText.trim() !== "") {
+                resultadoDiv.style.display = "block"; // Mostrarlo cuando hay resultado
+                resultadoDiv.style.opacity = "0";
+                
+                setTimeout(() => {
+                    resultadoDiv.style.transition = "opacity 0.8s ease-in-out";
+                    resultadoDiv.style.opacity = "1";
+                }, 100);
+            }
+        });
+    </script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
             const modoOscuro = localStorage.getItem("modo_oscuro") === "true";
             document.body.classList.toggle("dark-mode", modoOscuro);
         });
     </script>
-    
+
 </body>
 </html>

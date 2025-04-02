@@ -43,6 +43,8 @@ y_test_r = None
 x_full_r = None
 df  = None
 df_unido = None
+columnas_entrenamiento = None
+
 
 # creacion de la carpeta uploads
 output_dir = os.path.join(os.getcwd(), 'downloads')
@@ -133,63 +135,89 @@ def mostrar_historial():
 
 
 
+def entrenar_modelo_desde_csv():
+    global modelo_a, df_datos, x_train_a, x_test_a, y_train_a, y_test_a, x_full_a, scaler, columnas_entrenamiento, df_50
+    filepath = generar_csv_empleados(50)  # Genera el CSV automáticamente
+    
+    if not filepath:
+        return {"error": "No se pudo generar el archivo CSV"}
+    
+    modelo_a, x_train_a, x_test_a, y_train_a, y_test_a, x_full_a, df_datos = main_a(filepath)
+    columnas_a_eliminar = [col for col in ['ID', 'Riesgo'] if col in df_datos.columns]
+    columnas_entrenamiento = df_datos.drop(columns=columnas_a_eliminar).columns.tolist()
+    scaler = StandardScaler()
+    x_train_a = pd.DataFrame(x_train_a, columns=columnas_entrenamiento)  # Asegurar nombres de columnas
+    x_train_a_scaled = scaler.fit_transform(x_train_a)  # Entrenar scaler con nombres
+    df_50 = df_datos.copy()
+    return {"mensaje": "Modelo entrenado correctamente con el CSV generado"}
+
+@app.route('/entrenar_individual', methods=['POST'])
+def entrenar_modelo_individual():
+    resultado = entrenar_modelo_desde_csv()
+    if "error" in resultado:
+        return jsonify(resultado), 400
+    return jsonify(resultado)
 
 @app.route('/predecir_individual', methods=['GET', 'POST'])
 def predecir_individual():
-    global modelo_r, modelo_a, x_train, x_test, y_test, x_full, df_datos
+    global modelo_a, scaler, columnas_entrenamiento, df_50
 
-    if modelo_a is None:
-        FILEPATH = 'C:/Users/nazar/TP1-pp1/datos/empleados.csv'
+    if request.method == 'GET':
+        return render_template('predecir_individual.html')
+    
+    if modelo_a is None or scaler is None:
+        resultado = entrenar_modelo_desde_csv()
+        if "error" in resultado:
+            return jsonify(resultado), 400
 
-        if not os.path.exists(FILEPATH):
-            return jsonify({"error": f"El archivo {FILEPATH} no existe"}), 500
-        
-        try:
-            modelo_a, x_train, x_test, y_test, x_full, df_datos = main_a(FILEPATH)
-        except Exception as e:
-            return jsonify({"error": f"No se pudo entrenar el modelo: {str(e)}"}), 500
+    horas_trabajadas = request.form.get('horas_trabajadas')
+    ausencias = request.form.get('ausencias')
+    edad = request.form.get('edad')
+    salario = request.form.get('salario')
+    genero = request.form.get('genero')
 
-    resultado = None  # Inicializamos el resultado fuera de la lógica del POST
+    if not all([horas_trabajadas, ausencias, edad, salario, genero]):
+        return jsonify({"error": "Datos incompletos"}), 400
 
-    if request.method == 'POST':
-        horas_trabajadas = request.form.get('horas_trabajadas')
-        ausencias = request.form.get('ausencias')
-        edad = request.form.get('edad')
-        salario = request.form.get('salario')
-        genero = request.form.get('genero')
+    try:
+        horas_trabajadas = float(horas_trabajadas)
+        ausencias = int(ausencias)
+        edad = int(edad)
+        salario = float(salario)
+    except ValueError:
+        return jsonify({"error": "Los datos deben ser numéricos"}), 400
 
-        if not all([horas_trabajadas, ausencias, edad, salario, genero]):
-            return jsonify({"error": "Datos incompletos"}), 400
+    if genero not in ["Femenino", "Masculino"]:
+        return jsonify({"error": "Género inválido"}), 400
 
-        try:
-            horas_trabajadas = float(horas_trabajadas)
-            ausencias = int(ausencias)
-            edad = int(edad)
-            salario = float(salario)
-        except ValueError:
-            return jsonify({"error": "Los datos deben ser numéricos"}), 400
+    genero_femenino = 1 if genero == "Femenino" else 0
+    genero_masculino = 1 if genero == "Masculino" else 0
 
-        if genero not in ["Femenino", "Masculino"]:
-            return jsonify({"error": "Género inválido"}), 400
+    datos_ingresados = {
+        "Horas_Trabajadas": horas_trabajadas,
+        "Ausencias": ausencias,
+        "Edad": edad,
+        "Salario": salario,
+        "Genero_Femenino": genero_femenino,
+        "Genero_Masculino": genero_masculino
+    }
 
-        genero_femenino = 1 if genero == "Femenino" else 0
-        genero_masculino = 1 if genero == "Masculino" else 0
+    df_individual = pd.DataFrame([datos_ingresados])
+    df_individual = df_individual.reindex(columns=columnas_entrenamiento, fill_value=0)  # Asegurar orden y columnas
+    
+    print("Datos ingresados antes de la predicción:", df_individual)
 
-        df_individual = pd.DataFrame([[horas_trabajadas, ausencias, genero_femenino, genero_masculino]], 
-                                     columns=["Horas_Trabajadas", "Ausencias", "Genero_Femenino", "Genero_Masculino"])
-
-        if not hasattr(predecir_individual, "scaler"):
-            scaler = StandardScaler()
-            df_individual_normalizado = scaler.fit_transform(df_individual)
-            predecir_individual.scaler = scaler
-        else:
-            scaler = predecir_individual.scaler
-            df_individual_normalizado = scaler.transform(df_individual)
-
+    try:
+        df_individual_normalizado = scaler.transform(df_individual)
+        print("Datos normalizados:", df_individual_normalizado)
         prediccion = modelo_a.predict(df_individual_normalizado)
-        resultado = "Alto" if prediccion[0] == 1 else "Bajo"
+        print("Predicción del modelo:", prediccion)
+        prediccion_redondeada = int(prediccion[0])  # Evitar redondeo incorrecto
+        resultado = "Alto" if prediccion_redondeada == 1 else "Bajo"
+    except Exception as e:
+        return jsonify({"error": f"Error en la predicción: {str(e)}"}), 500
 
-    return render_template('predecir_individual.html', resultado=resultado)
+    return render_template('predecir_individual.html', resultado=resultado, datos=datos_ingresados, empleados=df_50.to_dict(orient='records'))
 
 
 # funcion encargada de verificar que existe el archivo y contiene las columnas requeridas
