@@ -21,24 +21,29 @@
     <div class="contenido">
         {% if usuario %}
             <div class="mensaje-bienvenida">
+                <a href="https://www.ungs.edu.ar/" target="_blank">
+                <img src="http://servicioscfp.ungs.edu.ar/sites/default/files/logo_IDEI.png" alt="Imagen Universidad" class="imagen-bienvenida">
+            </a>
                 <p>¡Bienvenido, {{ usuario }}!</p>
             </div>
-            <div class="botones">
-                <a href="{{ url_for('index') }}">
-                    <button class="button">Predicciones CSV</button>
-                </a>
-                <a href="{{ url_for('predecir_individual') }}">
-                    <button class="button">Predecir Individualmente</button>
-                </a>
-                <a href="{{ url_for('mostrar_historial') }}">
-                    <button class="button">Ver Historial de Usuarios</button>
-                </a>
-                <a href="#">
-                    <button class="button">Generar CSV</button>
-                </a>
-                <a href="{{ url_for('logout') }}">
-                    <button class="button">Cerrar sesión</button>
-                </a>
+            <div class="contenedor-inicio">
+                <div class="botones">
+                    <a href="{{ url_for('index') }}">
+                        <button class="button">Predicciones CSV</button>
+                    </a>
+                    <a href="{{ url_for('predecir_individual') }}">
+                        <button class="button">Predecir Individualmente</button>
+                    </a>
+                    <a href="{{ url_for('mostrar_historial') }}">
+                        <button class="button">Ver Historial de Usuarios</button>
+                    </a>
+                    <a href="#">
+                        <button class="button">Generar CSV</button>
+                    </a>
+                    <a href="{{ url_for('logout') }}">
+                        <button class="button">Cerrar sesión</button>
+                    </a>
+                </div>
             </div>
         {% else %}
             <div id="inicioModal" class="inicio-modal">
@@ -63,7 +68,7 @@
             <p><strong>Funcionalidades:</strong></p>
             <ul>
                 <li>Predicción de riesgo ocupacional de empleados.</li>
-                <li>Visualización del historial de predicciones.</li>
+                <li>Visualización del historial de usuarios que usaron la aplicación.</li>
                 <li>Generación y descarga de archivos CSV.</li>
                 <li>Filtrado y visualización de empleados de alto riesgo.</li>
             </ul>

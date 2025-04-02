@@ -1242,7 +1242,6 @@ body:not(.dark-mode) input[type="number"]:focus {
     transform: scale(0.95);
 }
 
-/* Botón de Información en la esquina superior izquierda */
 .informacion-btn {
     position: absolute;
     top: 20px;
@@ -1256,7 +1255,7 @@ body:not(.dark-mode) input[type="number"]:focus {
     border-radius: 5px;
 }
 
-/* Modal de Información */
+
 .informacion-modal {
     display: none; 
     position: fixed; 
@@ -1269,7 +1268,7 @@ body:not(.dark-mode) input[type="number"]:focus {
     background-color: rgba(0, 0, 0, 0.4); 
 }
 
-/* Modal Content */
+
 .informacion-modal-content {
     background-color: #fefefe;
     margin: 15% auto;
@@ -1290,7 +1289,7 @@ body.dark-mode .informacion-modal-content {
     text-align: center;
 }
 
-/* Botón de Cerrar */
+
 .informacion-close {
     color: #aaa;
     float: right;
@@ -1315,4 +1314,32 @@ ul {
     margin-left: 20px;
 }
 
+.contenedor-inicio {
+    background-color: rgba(216, 216, 216, 0.1);
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    max-width: 400px;
+    margin: 50px auto; /* Reduce la distancia del margen superior */
+    position: relative;
+    top: -100px; /* Eleva el contenedor */
+    border: 2px solid rgba(0, 0, 0, 0.5);
+}
 
+
+
+
+
+
+.dark-mode .contenedor-inicio {
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(255, 255, 255, 0.5);
+}
+
+
+
+.imagen-bienvenida {
+    width: 300px; 
+    height: auto;
+    margin-bottom: 180px;
+}
