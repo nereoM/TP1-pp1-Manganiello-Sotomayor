@@ -60,4 +60,31 @@ def main_a(ruta_archivo):
 
     x_full = scaler.transform(x)
 
-    return arbol, x_train, x_test, y_train, y_test, x_full, df_original
+    return arbol, x_train, x_test, y_train, y_test, x_full, df_original, scaler
+
+
+# funcion encargada de hacer la prediccion individual del empleado que pasamos por parametro
+def predecir_riesgo_individual(modelo, scaler, datos_usuario):
+    print("Realizando predicción...")
+
+    if scaler is None:
+        raise ValueError("Error: `scaler` no fue inicializado correctamente en `main_a()`.")
+
+    genero_femenino = 1 if datos_usuario['genero'] == 'Femenino' else 0
+    genero_masculino = 1 - genero_femenino
+
+    datos_prediccion = pd.DataFrame([[
+        datos_usuario['horas_trabajadas'],
+        datos_usuario['ausencias'],
+        genero_femenino,
+        genero_masculino
+    ]], columns=["Horas_Trabajadas", "Ausencias", "Genero_Femenino", "Genero_Masculino"])
+
+    print("Datos antes de escalar:", datos_prediccion)
+    datos_escalados = scaler.transform(datos_prediccion)
+    probabilidad = modelo.predict_proba(datos_escalados)[0][1]
+    riesgo = 'Alto' if probabilidad > 0.6 else 'Bajo'
+
+    print(f"Predicción realizada: {riesgo} (Probabilidad: {probabilidad:.2f})")
+    return riesgo, probabilidad
+
