@@ -37,9 +37,6 @@
                     <a href="{{ url_for('mostrar_historial') }}">
                         <button class="button">Ver Historial de Usuarios</button>
                     </a>
-                    <a href="#">
-                        <button class="button">Generar CSV</button>
-                    </a>
                     <a href="{{ url_for('logout') }}">
                         <button class="button">Cerrar sesión</button>
                     </a>
@@ -115,6 +112,27 @@
                 informacionModal.style.display = "none";
             }
         }
+
+        document.addEventListener("DOMContentLoaded", function() {
+    const informacionModal = document.getElementById("informacionModal");
+    const informacionBtn = document.getElementById("informacionBtn");
+    const informacionClose = document.querySelector(".informacion-close");
+
+    informacionBtn.onclick = function() {
+        informacionModal.style.display = "block";
+    };
+
+    informacionClose.onclick = function() {
+        informacionModal.style.display = "none";
+    };
+
+    window.onclick = function(event) {
+        if (event.target === informacionModal) {
+            informacionModal.style.display = "none";
+        }
+    };
+});
+
 
         document.addEventListener("DOMContentLoaded", function() {
             const modoOscuro = localStorage.getItem("modo_oscuro") === "true";

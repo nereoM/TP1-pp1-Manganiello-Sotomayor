@@ -102,17 +102,25 @@
                         
                             <!-- bton para descargar resultados -->
                             <div class="descargar-archivo">
-                                <h4>Descargar CSV | Mostrar empleados | Mostrar graficos</h4>
-                                <span class="material-symbols-outlined upload-button" onclick="generarYDescargarCSV()">download</span>
-                        
-                                <a href="{{ url_for('resultados') }}">
-                                    <span class="material-symbols-outlined upload-button" onclick="generarCSV(event, true)">pageview</span>
-                                </a>
-                                <a href="/graficos">
-                                    <span class="material-symbols-outlined upload-button">analytics</span>
-                                </a>
+                                <div class="tooltip-container">
+                                    <span class="material-symbols-outlined upload-button" onclick="generarYDescargarCSV()">download</span>
+                                    <div class="tooltip">Descargar CSV</div>
+                                </div>
+                            
+                                <div class="tooltip-container">
+                                    <a href="{{ url_for('resultados') }}">
+                                        <span class="material-symbols-outlined upload-button" onclick="generarCSV(event, true)">pageview</span>
+                                    </a>
+                                    <div class="tooltip">Mostrar empleados</div>
+                                </div>
+                            
+                                <div class="tooltip-container">
+                                    <a href="/graficos">
+                                        <span class="material-symbols-outlined upload-button">analytics</span>
+                                    </a>
+                                    <div class="tooltip">Mostrar gráficos</div>
+                                </div>
                             </div>
-                        </div>
             
             <script>
               
