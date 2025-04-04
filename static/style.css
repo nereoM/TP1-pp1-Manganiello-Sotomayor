@@ -1529,3 +1529,18 @@ input:focus, select:focus {
     opacity: 1;
 }
 
+.descargar-pdf {
+    display: inline-block;
+    margin-top: 10px;
+    color: #007bff;
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 0.3s ease;
+}
+
+.descargar-pdf:hover {
+    color: #0056b3;
+    text-decoration: underline;
+}
+
+

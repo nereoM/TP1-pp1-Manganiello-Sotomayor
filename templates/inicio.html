@@ -22,24 +22,16 @@
         {% if usuario %}
             <div class="mensaje-bienvenida">
                 <a href="https://www.ungs.edu.ar/" target="_blank">
-                <img src="http://servicioscfp.ungs.edu.ar/sites/default/files/logo_IDEI.png" alt="Imagen Universidad" class="imagen-bienvenida">
-            </a>
+                    <img src="http://servicioscfp.ungs.edu.ar/sites/default/files/logo_IDEI.png" alt="Imagen Universidad" class="imagen-bienvenida">
+                </a>
                 <p>¡Bienvenido, {{ usuario }}!</p>
             </div>
             <div class="contenedor-inicio">
                 <div class="botones">
-                    <a href="{{ url_for('index') }}">
-                        <button class="button">Predicciones CSV</button>
-                    </a>
-                    <a href="{{ url_for('predecir_individual') }}">
-                        <button class="button">Predecir Individualmente</button>
-                    </a>
-                    <a href="{{ url_for('mostrar_historial') }}">
-                        <button class="button">Ver Historial de Usuarios</button>
-                    </a>
-                    <a href="{{ url_for('logout') }}">
-                        <button class="button">Cerrar sesión</button>
-                    </a>
+                    <a href="{{ url_for('index') }}"><button class="button">Predicciones CSV</button></a>
+                    <a href="{{ url_for('predecir_individual') }}"><button class="button">Predecir Individualmente</button></a>
+                    <a href="{{ url_for('mostrar_historial') }}"><button class="button">Ver Historial de Usuarios</button></a>
+                    <a href="{{ url_for('logout') }}"><button class="button">Cerrar sesión</button></a>
                 </div>
             </div>
         {% else %}
@@ -70,6 +62,12 @@
                 <li>Filtrado y visualización de empleados de alto riesgo.</li>
             </ul>
 
+            <p><strong>Documentación adicional:</strong></p>
+            <p>Para más información, podés descargar la documentación completa:</p>
+            <a href="{{ url_for('static', filename='docs/documentacion.pdf') }}" target="_blank" class="descargar-pdf">
+                📄 Ver documentación (PDF)
+            </a>
+
             <p><strong>Autores:</strong></p>
             <p>Desarrollado por Nereo Manganiello y Nazareno Sotomayor.</p>
         </div>
@@ -87,59 +85,29 @@
             document.querySelector(".moon").style.display = modoOscuro ? "none" : "block";
         }
 
-        var modal = document.getElementById("inicioModal");
-        var btn = document.getElementById("informacionBtn");
-
-        btn.onclick = function() {
-            modal.style.display = "block";
-        }
-
-        window.onclick = function(event) {
-            if (event.target == modal) {
-                modal.style.display = "none";
-            }
-        }
-
-        var informacionModal = document.getElementById("informacionModal");
-        var informacionBtn = document.getElementById("informacionBtn");
-
-        informacionBtn.onclick = function() {
-            informacionModal.style.display = "block";
-        }
-
-        window.onclick = function(event) {
-            if (event.target == informacionModal) {
-                informacionModal.style.display = "none";
-            }
-        }
-
-        document.addEventListener("DOMContentLoaded", function() {
-    const informacionModal = document.getElementById("informacionModal");
-    const informacionBtn = document.getElementById("informacionBtn");
-    const informacionClose = document.querySelector(".informacion-close");
-
-    informacionBtn.onclick = function() {
-        informacionModal.style.display = "block";
-    };
-
-    informacionClose.onclick = function() {
-        informacionModal.style.display = "none";
-    };
-
-    window.onclick = function(event) {
-        if (event.target === informacionModal) {
-            informacionModal.style.display = "none";
-        }
-    };
-});
-
-
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", function () {
             const modoOscuro = localStorage.getItem("modo_oscuro") === "true";
             document.body.classList.toggle("dark-mode", modoOscuro);
-
             document.querySelector(".sun").style.display = modoOscuro ? "none" : "block";
             document.querySelector(".moon").style.display = modoOscuro ? "block" : "none";
+
+            const informacionModal = document.getElementById("informacionModal");
+            const informacionBtn = document.getElementById("informacionBtn");
+            const informacionClose = document.querySelector(".informacion-close");
+
+            informacionBtn.onclick = function () {
+                informacionModal.style.display = "block";
+            };
+
+            informacionClose.onclick = function () {
+                informacionModal.style.display = "none";
+            };
+
+            window.onclick = function (event) {
+                if (event.target === informacionModal) {
+                    informacionModal.style.display = "none";
+                }
+            };
         });
     </script>
 
