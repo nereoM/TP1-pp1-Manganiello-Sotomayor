@@ -26,6 +26,7 @@ def leer_y_generar_riesgo(datos_csv):
 
     return df_datos, df_riesgos, df
 
+# funcion principal encargada de entrenar el modelo y escalar los datos, utilizando arboles de decision
 def main_a(ruta_archivo):
 
     df_datos, df_riesgos, df = leer_y_generar_riesgo(ruta_archivo)
@@ -44,6 +45,7 @@ def main_a(ruta_archivo):
 
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=0)
 
+    # escalamos los datos de entrada
     scaler = StandardScaler()
     x_train = scaler.fit_transform(x_train)
     x_test = scaler.transform(x_test)
@@ -55,6 +57,8 @@ def main_a(ruta_archivo):
     print(df_datos.head())
     print(df_riesgos.head())
 
+    # entrenamos el modelo de arbol de decision
+    # max_depth=2 para evitar sobreajuste
     arbol = DecisionTreeClassifier(max_depth=2, random_state=0)
     arbol.fit(x_train, y_train)
 
@@ -65,14 +69,13 @@ def main_a(ruta_archivo):
 
 # funcion encargada de hacer la prediccion individual del empleado que pasamos por parametro
 def predecir_riesgo_individual(modelo, scaler, datos_usuario):
-    print("Realizando predicción...")
-
     if scaler is None:
         raise ValueError("Error: `scaler` no fue inicializado correctamente en `main_a()`.")
 
     genero_femenino = 1 if datos_usuario['genero'] == 'Femenino' else 0
     genero_masculino = 1 - genero_femenino
 
+    # creamos un DataFrame con los datos del usuario
     datos_prediccion = pd.DataFrame([[
         datos_usuario['horas_trabajadas'],
         datos_usuario['ausencias'],
@@ -81,7 +84,9 @@ def predecir_riesgo_individual(modelo, scaler, datos_usuario):
     ]], columns=["Horas_Trabajadas", "Ausencias", "Genero_Femenino", "Genero_Masculino"])
 
     print("Datos antes de escalar:", datos_prediccion)
+    # escalamos los datos de entrada
     datos_escalados = scaler.transform(datos_prediccion)
+    # hacemos la probabilidad de riesgo con el modelo entrenado
     probabilidad = modelo.predict_proba(datos_escalados)[0][1]
     riesgo = 'Alto' if probabilidad > 0.6 else 'Bajo'
 

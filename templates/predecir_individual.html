@@ -10,6 +10,7 @@
 </head>
 <body_predecir_individual>
 
+    <!-- labels para introducir los datos -->
     <div class="contenido_predecir_individual">
         <h1>Formulario de Predicción Individual</h1>
         <form method="POST" action="/predecir_individual" class="formulario" id="prediccionForm">
@@ -35,6 +36,7 @@
             <button type="submit" class="boton-principal">Predecir</button>
         </form>
     
+        <!--mostramos los resultados-->
         {% if resultado %}
         <div class="resultado">
             <h3>Resultado: {{ resultado }} riesgo</h3>

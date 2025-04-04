@@ -17,6 +17,7 @@
         
 
 <script>
+    // función para borrar el historial
     document.getElementById("borrar-historial").addEventListener("click", function() {
         if (confirm("¿Estás seguro de que quieres borrar el historial?")) {
             fetch("/limpiar_historial", { method: "POST" })
@@ -31,7 +32,29 @@
 </script>
 
 
-        
+        <!-- tabla de historial -->
+        {% if historial and historial|length > 0 %}
+            <table class="tabla-historial">
+                <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Fecha</th>
+                        <th>Archivo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for entrada in historial %}
+                        <tr>
+                            <td>{{ entrada['usuario'] }}</td>
+                            <td>{{ entrada['fecha'] }}</td>
+                            <td>{{ entrada['archivo'] }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% else %}
+            <p>No hay registros en el historial.</p>
+        {% endif %}
         {% if historial %}
             <table class="tabla-historial">
                 <thead>

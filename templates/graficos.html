@@ -14,7 +14,7 @@
     </header>
     
     <div class="container">
-        <!-- Matriz de Riesgos -->
+        <!-- matriz de riesgos -->
         <div class="matrix-container">
             <h2>Matriz de Confusión</h2>
             <img 
@@ -37,7 +37,7 @@
             </a>
         </div>
     
-        <!-- Curva ROC -->
+        <!-- curva ROC -->
         <div class="curva-container">
             <h2>Curva ROC</h2>
             <img 
@@ -90,6 +90,7 @@
         const curvaImage = document.getElementById('curvaImage');
         const curva2Image = document.getElementById('curva2Image');
     
+        // funciones para el zoom de las imágenes
         function zoomIn(i) {
             if (i == 0) {
                 currentScaleM += 0.2;
@@ -134,6 +135,7 @@
     </script>
 
 <script>
+    // funcion para alternar entre modo claro y oscuro
     document.addEventListener("DOMContentLoaded", function() {
         const modoOscuro = localStorage.getItem("modo_oscuro") === "true";
         document.body.classList.toggle("dark-mode", modoOscuro);

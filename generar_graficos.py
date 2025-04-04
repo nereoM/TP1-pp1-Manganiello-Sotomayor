@@ -9,7 +9,6 @@ import pandas as pd
 import numpy as np
 
 # funcion encargada de generar la imagen de la matriz de confusión y guardarla en el directorio correspondiente
-
 def guardar_matriz_confusion(y_pred, x_test, y_test, clases=None, nombre_archivo='matriz_riesgos.png'):
 
     IMG_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'imagenes')
@@ -38,7 +37,6 @@ def guardar_matriz_confusion(y_pred, x_test, y_test, clases=None, nombre_archivo
     return matriz
 
 # funcion encargada de generar la imagen de la curva ROC y guardarla en el directorio correspondiente
-
 def guardar_curva_roc(y_pred, y_test, nombre_archivo='curva_roc.png'):
     IMG_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'imagenes')
     fpr, tpr, thresholds = roc_curve(y_test, y_pred)
@@ -57,6 +55,8 @@ def guardar_curva_roc(y_pred, y_test, nombre_archivo='curva_roc.png'):
     plt.savefig(ruta_completa, bbox_inches='tight')
     plt.close()
 
+# funcion encargada de generar la imagen de la curva de aprendizaje y guardarla en el directorio correspondiente
+# esta funcion genera una curva de aprendizaje para un modelo dado, utilizando los datos de entrenamiento y prueba proporcionados.
 def guardar_curva_aprendizaje(y_pred, x_train, x_test, y_train, y_test):
     IMG_FOLDER = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'static', 'imagenes')
 

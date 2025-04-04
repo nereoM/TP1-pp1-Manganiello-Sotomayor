@@ -146,6 +146,8 @@
             menu.classList.toggle('active');
         }
 
+        // funcion para mostrar el indicador de carga al presionar el botón
+        // y ocultarlo después de 3 segundos
         function presionarBoton() {
             const play = document.querySelectorAll('.play-button');
             const indicadoresCarga = document.querySelectorAll('.indicator-carga');
@@ -162,6 +164,7 @@
     <script>
         let filepath = null;
 
+        // función para seleccionar el archivo
         function seleccionarArchivo() {
             const inputArchivo = document.getElementById("archivo");
 
@@ -178,6 +181,8 @@
             }
         }
 
+        // función para subir el archivo
+        // y mostrar el nombre del archivo seleccionado
         function subirArchivo() {
             const inputArchivo = document.getElementById("archivo");
 
@@ -207,7 +212,8 @@
 
             inputArchivo.value = "";
     }
-
+        // funcion para entrenar el modelo
+        // y mostrar el mensaje de entrenamiento
         function entrenarModelo() {
             if (!filepath) {
                 alert("Primero sube un archivo.");
@@ -241,6 +247,8 @@
             });
         }
 
+        // funcion para predecir el modelo
+        // y mostrar el resultado de la prediccion
         function predecirModelo() {
             fetch('/predecir_regresion', { method: 'POST' })
                 .then(response => response.json())
@@ -272,6 +280,8 @@
             });
         }
 
+        // funcion para generar el CSV
+        // y mostrar el mensaje de generacion
         function generarCSV(event = null, redirect = false) {
             if (event) event.preventDefault();
 
@@ -302,6 +312,7 @@
             window.location.href = "/descargar_csv";
         }
 
+        // funcion para generar el CSV y descargarlo
         function generarYDescargarCSV() {
             fetch('/generar_csv', {
                 method: 'POST',
@@ -322,6 +333,8 @@
             .catch(error => console.error('Error:', error));
         }
 
+        // funcion para generar el CSV de empleados
+        // y mostrar el mensaje de generacion
         async function generarCSVEmpleados() {
             const input = document.getElementById('numeroEmpleados');
             const n = parseInt(input.value);

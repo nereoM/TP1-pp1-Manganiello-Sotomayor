@@ -11,6 +11,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 </head>
 
+<!-- menu desplegable -->
 <body class="{{ 'dark-mode' if modo_oscuro == 'true' else '' }}">
 
     <div class="menu-desplegable">
@@ -210,6 +211,8 @@
             inputArchivo.value = "";
     }
 
+        // funcion para entrenar el modelo
+        // Se ejecuta al hacer clic en el botón de entrenar
         function entrenarModelo() {
             if (!filepath) {
                 alert("Primero sube un archivo.");
@@ -243,6 +246,8 @@
             });
         }
 
+        // funcion para predecir el modelo
+        // se ejecuta al hacer clic en el boton de predecir
         function predecirModelo() {
             fetch('/predecir_arbol', { method: 'POST' })
                 .then(response => response.json())
@@ -274,6 +279,8 @@
             });
         }
 
+        // funcion para generar el CSV
+        // se ejecuta al hacer clic en el boton de generar CSV
         function generarCSV(event = null, redirect = false) {
             if (event) event.preventDefault();
 
@@ -304,6 +311,8 @@
             window.location.href = "/descargar_csv";
         }
 
+        // funcion para generar y descargar el CSV
+        // se ejecuta al hacer clic en el boton de descargar CSV
         function generarYDescargarCSV() {
             fetch('/generar_csv', {
                 method: 'POST',
@@ -324,6 +333,8 @@
             .catch(error => console.error('Error:', error));
         }
 
+        // funcion para generar el CSV de empleados
+        // se ejecuta al hacer clic en el boton de generar CSV
         async function generarCSVEmpleados() {
             const input = document.getElementById('numeroEmpleados');
             const n = parseInt(input.value);

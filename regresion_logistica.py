@@ -26,7 +26,7 @@ def leer_y_generar_riesgo(datos_csv):
 
     return df_datos, df_riesgos, df
 
-
+# funcion principal encargada de entrenar el modelo y escalar los datos, utilizando regresion logistica
 def main_r(ruta_archivo):
 
     df_datos, df_riesgos, df = leer_y_generar_riesgo(ruta_archivo)
@@ -45,6 +45,7 @@ def main_r(ruta_archivo):
 
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.2, random_state=0)
 
+    # escalamos los datos de entrada
     scaler = StandardScaler()
     x_train = scaler.fit_transform(x_train)
     x_test = scaler.transform(x_test)
@@ -56,9 +57,11 @@ def main_r(ruta_archivo):
     print(df_datos.head())
     print(df_riesgos.head())
 
+    # entrenamos el modelo de regresion logistica
     log_reg = LogisticRegression(random_state=0)
     log_reg.fit(x_train, y_train)
 
+    # escalamos los datos de entrada completos, para luego predecir los datos completos
     x_full = scaler.transform(x)
 
     return log_reg, x_train, x_test, y_train, y_test, x_full, df_original

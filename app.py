@@ -159,6 +159,8 @@ def predecir_individual():
 
         riesgo, probabilidad = predecir_riesgo_individual(modelo_a, scaler, datos_form)
 
+        reiniciar_variables()
+
         return render_template('predecir_individual.html',
                                resultado=riesgo,
                                probabilidad=f"{probabilidad*100:.1f}%",
