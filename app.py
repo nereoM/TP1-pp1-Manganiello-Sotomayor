@@ -465,6 +465,16 @@ def descargar_csv():
 
     return send_file(ruta_csv, as_attachment=True, download_name="empleados_con_riesgo.csv")
 
+@app.route('/descargar_csv_up')
+def descargar_csv_up():
+
+    input_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'uploads', 'empleados.csv')
+
+    if not os.path.exists(input_dir):
+        return jsonify({"error": "El archivo CSV no existe"}), 404
+
+    return send_file(input_dir, as_attachment=True, download_name="empleados.csv")
+
 @app.route('/limpiar_historial', methods=['POST'])
 def limpiar_historial():
     try:

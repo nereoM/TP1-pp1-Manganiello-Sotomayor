@@ -63,7 +63,7 @@
                 <h3>Generar CSV</h3>
                 <label for="numeroEmpleados">Número de empleados (mínimo 50):</label>
                 <input type="number" id="numeroEmpleados" min="50" value="50">
-                <span class="material-symbols-outlined upload-button" onclick="generarCSVEmpleados()">note_add</span>
+                <span class="material-symbols-outlined upload-button" onclick="generarYDescargarCSVUp()">note_add</span>
                 <div id="loader" style="display: none; margin: 10px 0;">
                     <p>Generando archivo CSV...</p>
                 </div>
@@ -281,10 +281,10 @@
 
         // funcion para generar el CSV
         // se ejecuta al hacer clic en el boton de generar CSV
-        function generarCSV(event = null, redirect = false) {
+        function generarYDescargarCSVUp(event = null) {
             if (event) event.preventDefault();
-
-            return fetch('/generar_csv', {
+        
+            fetch('/generar_csv_pruebas', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -294,22 +294,15 @@
             .then(response => response.json())
             .then(data => {
                 if (data.error) throw new Error(data.error);
-
-                if (redirect) {
-                    window.location.href = "{{ url_for('resultados') }}";
-                }
-                return data;
+        
+                window.location.href = "/descargar_csv_up";
             })
             .catch(error => {
                 console.error('Error:', error);
                 alert("Error al generar el CSV: " + error.message);
-                throw error;
             });
         }
-
-        function descargarCSV() {
-            window.location.href = "/descargar_csv";
-        }
+        
 
         // funcion para generar y descargar el CSV
         // se ejecuta al hacer clic en el boton de descargar CSV
