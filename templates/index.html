@@ -326,6 +326,34 @@
             .catch(error => console.error('Error:', error));
         }
 
+        // funcion para generar el CSV
+        // y mostrar el mensaje de generacion
+        function generarCSV(event = null, redirect = false) {
+            if (event) event.preventDefault();
+
+            return fetch('/generar_csv', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ filepath: 'ruta/del/archivo.csv' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) throw new Error(data.error);
+
+                if (redirect) {
+                    window.location.href = "{{ url_for('resultados') }}";
+                }
+                return data;
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("Error al generar el CSV: " + error.message);
+                throw error;
+            });
+        }
+
         // funcion para generar el CSV de empleados
         // se ejecuta al hacer clic en el boton de generar CSV
         async function generarCSVEmpleados() {

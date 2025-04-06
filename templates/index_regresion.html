@@ -63,7 +63,7 @@
                             <h3>Generar CSV</h3>
                             <label for="numeroEmpleados">Número de empleados (mínimo 50):</label>
                             <input type="number" id="numeroEmpleados" min="50" value="50">
-                            <span class="material-symbols-outlined upload-button" onclick="generarCSVEmpleados()">note_add</span>
+                            <span class="material-symbols-outlined upload-button" onclick="generarYDescargarCSVUp()">note_add</span>
                             <div id="loader" style="display: none; margin: 10px 0;">
                                 <p>Generando archivo CSV...</p>
                             </div>
@@ -331,6 +331,30 @@
                 }
             })
             .catch(error => console.error('Error:', error));
+        }
+        
+        // funcion para generar el CSV
+        // se ejecuta al hacer clic en el boton de generar CSV
+        function generarYDescargarCSVUp(event = null) {
+            if (event) event.preventDefault();
+        
+            fetch('/generar_csv_pruebas', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ filepath: 'ruta/del/archivo.csv' })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.error) throw new Error(data.error);
+        
+                window.location.href = "/descargar_csv_up";
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert("Error al generar el CSV: " + error.message);
+            });
         }
 
         // funcion para generar el CSV de empleados
