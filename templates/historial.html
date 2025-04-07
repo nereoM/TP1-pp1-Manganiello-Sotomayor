@@ -7,32 +7,12 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined&display=swap" />
 </head>
-
-    <div class="container">
+<body class="body-historial">
+    <div class="contenedor-historial">
         <h1>Historial de Usuarios</h1>
-        
 
         <button id="borrar-historial" class="boton-borrar">Borrar Historial</button>
 
-        
-
-<script>
-    // función para borrar el historial
-    document.getElementById("borrar-historial").addEventListener("click", function() {
-        if (confirm("¿Estás seguro de que quieres borrar el historial?")) {
-            fetch("/limpiar_historial", { method: "POST" })
-            .then(response => response.json())
-            .then(data => {
-                alert(data.mensaje);
-                location.reload();
-            })
-            .catch(error => console.error("Error:", error));
-        }
-    });
-</script>
-
-
-        <!-- tabla de historial -->
         {% if historial and historial|length > 0 %}
             <table class="tabla-historial">
                 <thead>
@@ -53,40 +33,29 @@
                 </tbody>
             </table>
         {% else %}
-            <p>No hay registros en el historial.</p>
+            <p class="mensaje-vacio">No hay registros en el historial.</p>
         {% endif %}
-        {% if historial %}
-            <table class="tabla-historial">
-                <thead>
-                    <tr>
-                        <th>Usuario</th>
-                        <th>Fecha</th>
-                        <th>Archivo</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for entrada in historial %}
-                        <tr>
-                            <td>{{ entrada['usuario'] }}</td>
-                            <td>{{ entrada['fecha'] }}</td>
-                            <td>{{ entrada['archivo'] }}</td>
-                        </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        {% else %}
-            <p>No hay registros en el historial.</p>
-        {% endif %}
-        
+
         <a href="/" class="boton-volver">Volver al inicio</a>
     </div>
-    
+
     <script>
+        document.getElementById("borrar-historial").addEventListener("click", function() {
+            if (confirm("¿Estás seguro de que quieres borrar el historial?")) {
+                fetch("/limpiar_historial", { method: "POST" })
+                .then(response => response.json())
+                .then(data => {
+                    alert(data.mensaje);
+                    location.reload();
+                })
+                .catch(error => console.error("Error:", error));
+            }
+        });
+
         document.addEventListener("DOMContentLoaded", function() {
             const modoOscuro = localStorage.getItem("modo_oscuro") === "true";
             document.body.classList.toggle("dark-mode", modoOscuro);
         });
     </script>
-    
 </body>
 </html>

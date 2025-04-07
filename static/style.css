@@ -849,10 +849,34 @@ body:not(.dark-mode) input[name="nombre_usuario"]:focus {
 .boton_ingreso:hover::before {
     left: 100%;
 }
+
+
+.body-historial {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f4f4;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.contenedor-historial {
+    background-color: #ffffff;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    max-width: 1000px;
+    width: 90%;
+    margin: 40px auto;
+    text-align: center;
+}
+
 .tabla-historial {
     width: 100%;
     border-collapse: collapse;
-    margin-top: 20px;
+    margin-top: 30px;
 }
 
 .tabla-historial th, .tabla-historial td {
@@ -862,7 +886,7 @@ body:not(.dark-mode) input[name="nombre_usuario"]:focus {
 
 .tabla-historial th {
     background-color: #000000;
-    color: rgb(255, 255, 255);
+    color: white;
     font-weight: bold;
 }
 
@@ -872,6 +896,7 @@ body:not(.dark-mode) input[name="nombre_usuario"]:focus {
 
 .tabla-historial tr:hover {
     background-color: #000000;
+    color: white;
 }
 
 .tabla-historial td {
@@ -880,24 +905,40 @@ body:not(.dark-mode) input[name="nombre_usuario"]:focus {
 
 
 .boton-volver {
-    display: inline-block;
     background-color: #000000;
     color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    text-decoration: none;
-    margin-top: 20px;
-    text-align: center;
+    font-size: 16px;
+    padding: 12px 20px;
+    border: none;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: background 0.3s, transform 0.2s;
+    box-shadow: 2px 2px 10px rgba(0, 0, 0, 0.2);
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none; 
+    justify-content: center;
+    margin: 20px auto; 
 }
 
 .boton-volver:hover {
     background-color: #000000;
+    transform: scale(1.05);
 }
 
 .boton-volver:active {
-    background-color: #6d0091;
-   
+    transform: scale(0.95);
 }
+
+
+
+.mensaje-vacio {
+    margin-top: 30px;
+    color: #555;
+    font-size: 18px;
+}
+
 
 
 header {
@@ -1356,7 +1397,7 @@ ul {
 
 .imagen-bienvenida {
     display: block;
-    margin: 0 auto 211PX auto;
+    margin: 0 auto 140PX auto;
     width: 300px; 
     height: auto;
     transition: transform 0.3s ease, filter 0.3s ease;

@@ -188,7 +188,6 @@ def subir_archivo():
     filename = secure_filename(file.filename)
 
     try:
-
         from io import BytesIO
         file_bytes = BytesIO(file.read())
   
@@ -210,10 +209,15 @@ def subir_archivo():
         else:
             raise PermissionError("No se pudo guardar el archivo")
         
+     
+        usuario = session.get('usuario', 'Desconocido')
+        agregar_entrada(usuario, archivo=filename)
+
         return jsonify({"mensaje": "Archivo subido correctamente", "filepath": ruta_final})
     
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
 
 
 @app.route('/generar_csv_pruebas', methods=['POST'])

@@ -21,7 +21,7 @@
     <div class="contenido">
         {% if usuario %}
             <div class="mensaje-bienvenida">
-                <a href="https://www.ungs.edu.ar/" target="_blank">
+                <a href="https://www.ungs.edu.ar/idei/idei" target="_blank">
                     <img src="https://virtual.ungs.edu.ar/moodle/pluginfile.php/21273/course/summary/UNGS--IDEI-logo%20nuevo%20c%20%2B%20definicion.png" class="imagen-bienvenida">
                 </a>
                 <p>¡Bienvenido, {{ usuario }}!</p>
@@ -64,9 +64,11 @@
 
             <p><strong>Documentación adicional:</strong></p>
             <p>Para más información, podés descargar la documentación completa:</p>
-            <a href="{{ url_for('static', filename='docs/documentacion.pdf') }}" target="_blank" class="descargar-pdf">
-                📄 Ver documentación (PDF)
-            </a>
+            <a href="https://github.com/nereoM/TP1-pp1-Manganiello-Sotomayor/raw/main/Documentación tp1-pp1.pdf" 
+            target="_blank" class="descargar-pdf">
+            📄 Ver documentación (PDF)
+         </a>
+         
 
             <p><strong>Autores:</strong></p>
             <p>Desarrollado por Nereo Manganiello y Nazareno Sotomayor.</p>
