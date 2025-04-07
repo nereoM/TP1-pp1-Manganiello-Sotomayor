@@ -1584,4 +1584,17 @@ input:focus, select:focus {
     text-decoration: underline;
 }
 
+.contenido_predecir_individual {
+    max-width: 600px;
+    margin: 0 auto; 
+    padding: 40px 20px;
+    background-color: var(--background-container, #ffffff); 
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    font-family: 'Poppins', sans-serif;
+    transition: background 0.3s ease;
+}
+
+
+
 
