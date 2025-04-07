@@ -1595,6 +1595,20 @@ input:focus, select:focus {
     transition: background 0.3s ease;
 }
 
+body.dark-mode .contenido_predecir_individual {
+    max-width: 600px;
+    margin: 0 auto; 
+    padding: 40px 20px;
+    background-color: var(--background-container, #000000); 
+    border-radius: 12px;
+    box-shadow: 0 0 15px rgba(193, 193, 193, 0.1);
+    font-family: 'Poppins', sans-serif;
+    transition: background 0.3s ease;
+}
+
+body.dark-mode .contenido_predecir_individual {
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+}
 
 
 
