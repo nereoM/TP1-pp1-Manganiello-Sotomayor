@@ -866,7 +866,18 @@ body:not(.dark-mode) input[name="nombre_usuario"]:focus {
     background-color: #ffffff;
     padding: 40px;
     border-radius: 15px;
-    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 8px 20px #8a2be2;
+    max-width: 1000px;
+    width: 90%;
+    margin: 40px auto;
+    text-align: center;
+}
+
+body.dark-mode .contenedor-historial {
+    background-color: #000000;
+    padding: 40px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px #007bff;
     max-width: 1000px;
     width: 90%;
     margin: 40px auto;
@@ -890,8 +901,14 @@ body:not(.dark-mode) input[name="nombre_usuario"]:focus {
     font-weight: bold;
 }
 
+
+
 .tabla-historial tr:nth-child(even) {
-    background-color: #6d0091;
+    background-color: #007bff;
+}
+
+body:not(.dark-mode) .tabla-historial tr:nth-child(even) {
+    background-color: #8a2be2;
 }
 
 .tabla-historial tr:hover {
@@ -1237,8 +1254,8 @@ input[type="number"] {
 }
 
 input[type="number"]:focus {
-    border-color: #1e90ff; /* Azul más intenso */
-    box-shadow: 0 0 15px rgba(30, 144, 255, 0.8); /* Más azul y un poco más brillante */
+    border-color: #1e90ff; 
+    box-shadow: 0 0 15px rgba(30, 144, 255, 0.8); 
     outline: none;
 }
 
@@ -1377,9 +1394,9 @@ ul {
     border-radius: 10px;
     text-align: center;
     max-width: 400px;
-    margin: 50px auto; /* Reduce la distancia del margen superior */
+    margin: 50px auto; 
     position: relative;
-    top: -100px; /* Eleva el contenedor */
+    top: -100px; 
     border: 2px solid rgba(0, 0, 0, 0.5);
 }
 
