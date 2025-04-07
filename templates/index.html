@@ -283,18 +283,20 @@
         // se ejecuta al hacer clic en el boton de generar CSV
         function generarYDescargarCSVUp(event = null) {
             if (event) event.preventDefault();
-        
+
+            const n = parseInt(document.getElementById("numeroEmpleados").value);
+            
             fetch('/generar_csv_pruebas', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify({ filepath: 'ruta/del/archivo.csv' })
+                body: JSON.stringify({ n: n })
             })
             .then(response => response.json())
             .then(data => {
                 if (data.error) throw new Error(data.error);
-        
+
                 window.location.href = "/descargar_csv_up";
             })
             .catch(error => {
@@ -302,6 +304,7 @@
                 alert("Error al generar el CSV: " + error.message);
             });
         }
+
         
 
         // funcion para generar y descargar el CSV
